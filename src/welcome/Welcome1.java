@@ -17,7 +17,10 @@ public class Welcome1 {
 		Appre ap=new Appre();
 		A_newEmp emp=new A_newEmp();
 //		emp.registerEmp();
-		ap.insertAns();
+//		ap.insertAns();
+//		ap.myAppre();
+//		ap.myApprePast();
+		ap.byQuebyEmp();
 		
 	}
 

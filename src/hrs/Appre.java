@@ -64,7 +64,7 @@ public class Appre {
 		}
 	}
 
-	public void insertAns() {
+	public void insertAns() { // 답변 등록
 		// 반복 질문번호별로
 		// 연도에 맞게 질문 가져와서 출력 (질문 테이블)
 		String que = "SELECT * FROM APPRAISALQUE a  WHERE substr(queno,1,4)=" + year;
@@ -83,13 +83,22 @@ public class Appre {
 				System.out.println("┏━━━━━━━━━━━━━━━━━━━┓");
 				System.out.println(rs2.getString("name"));
 				while (rs.next()) {
+					int objnumber = rs2.getInt("Empno");
 					System.out.println(rs.getString("question")); // 뽑아온 질문 출력
 					String point = sc.nextLine();
-					anw = "INSERT INTO APPRAISALANSWER VALUES (" + rs.getInt("Queno") + "," + point + ","
-							+ Welcome1.user.getEmpno() + "," + rs2.getInt("empno") + ")";
-					stmt3 = con.createStatement();
-					stmt3.executeUpdate(anw);
-
+					anw = "INSERT INTO APPRAISALANSWER VALUES (" + rs.getInt("Queno") + "," + point + "," + objnumber
+							+ "," + Welcome1.user.getEmpno() + ")";
+					try {
+						stmt3 = con.createStatement();
+						stmt3.executeUpdate(anw);
+					} catch (SQLException e) {
+						System.out.println("이미 평가를 했습니다");
+						try {
+							con.rollback();
+						} catch (SQLException e1) {
+							System.out.println("롤백예외발생:" + e1.getMessage());
+						}
+					}
 				}
 			}
 			System.out.println("┗━━━━━━━━━━━━━━━━━━━┛");
@@ -106,6 +115,89 @@ public class Appre {
 			DB.close(rs, stmt, con);
 		}
 
+	}
+
+	public void myAppre() { // 내 결과 보기
+		// 사람별 항목별 이름 나오게 평균점수
+		String byObjbyQueno = "SELECT DISTINCT name, question , 평균점수 \r\n"
+				+ "FROM appraisalQue Q, EMPLOYEE e ,(SELECT obj, queno, ROUND(avg(point),3) \"평균점수\" FROM APPRAISALANSWER aa GROUP BY obj, QUENO) \"그룹테이블\" \r\n"
+				+ "WHERE q.queno=그룹테이블.queno AND 그룹테이블.obj = e.empno\r\n" + "AND name = '" + Welcome1.user.getName()
+				+ "'";
+		try {
+			con = DB.con();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(byObjbyQueno);
+			while (rs.next()) {
+				System.out.println(rs.getString("QUESTION") + " : " + rs.getString("평균점수"));
+			}
+			// 내 전체 평균
+			String myallAvg = "SELECT ROUND(avg(point),3) FROM APPRAISALANSWER aa  WHERE OBJ="+Welcome1.user.getEmpno()+" GROUP BY OBJ";
+			rs = stmt.executeQuery(myallAvg);
+			while (rs.next()) {
+				System.out.println("-------------------");
+				System.out.println("총 평균 : " + rs.getString(1));
+			}
+
+		} catch (SQLException e) {
+			System.out.println("SQL예외: " + e.getMessage());
+		}
+
+	}
+
+	public void myApprePast() { // 내 결과+ 연도지정
+		// 사람별 항목별 이름 나오게 평균점수
+		System.out.println("조회할 연도를 입력해주세요(YYYY)");
+		String pastyear=sc.nextLine();
+		String byObjbyQueno = "SELECT DISTINCT name, question , 평균점수 \r\n"
+				+ "FROM appraisalQue Q, EMPLOYEE e ,(SELECT obj, queno, ROUND(avg(point),3) \"평균점수\" FROM APPRAISALANSWER aa GROUP BY obj, QUENO) \"그룹테이블\" \r\n"
+				+ "WHERE q.queno=그룹테이블.queno AND 그룹테이블.obj = e.empno\r\n" + "AND name = '" + Welcome1.user.getName()
+				+ "'AND substr(q.queno,1,4)= "+pastyear;
+		try {
+			con = DB.con();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(byObjbyQueno);
+			while (rs.next()) {
+				System.out.println(rs.getString("QUESTION") + " : " + rs.getString("평균점수"));
+			}
+			// 내 전체 평균
+			String myallAvg = "SELECT ROUND(avg(point),3) FROM APPRAISALANSWER aa  WHERE OBJ="+Welcome1.user.getEmpno()+" AND substr(queno,1,4)="+pastyear+" GROUP BY OBJ";
+			rs = stmt.executeQuery(myallAvg);
+			while (rs.next()) {
+				System.out.println("-------------------");
+				System.out.println("총 평균 : " + rs.getString(1));
+			}
+
+		} catch (SQLException e) {
+			System.out.println("SQL예외: " + e.getMessage());
+		}
+
+	}
+
+	public void byQuebyEmp() {
+		// 사람별 항목별 이름 나오게 평균점수
+		System.out.println("조회 대상자의 이름을 입력하세요");
+		String name=sc.nextLine();
+		System.out.println("조회할 연도를 입력해주세요(YYYY)");
+		String pastyear=sc.nextLine();
+				String byObjbyQueno = "SELECT DISTINCT name, question , 평균점수 FROM appraisalQue Q, EMPLOYEE e ,(SELECT obj, queno, ROUND(avg(point),3) \"평균점수\" FROM APPRAISALANSWER aa GROUP BY obj, QUENO) grtb WHERE q.queno=grtb.queno AND grtb.obj = e.empno AND name = '"+name+"' AND substr(q.queno,1,4)="+pastyear;
+				try {
+					con = DB.con();
+					stmt = con.createStatement();
+					rs = stmt.executeQuery(byObjbyQueno);
+					while (rs.next()) {
+						System.out.println(rs.getString("question") + " : " + rs.getString("평균점수"));
+					}
+					//전체 평균
+					String myallAvg = "SELECT ROUND(avg(point),3) FROM APPRAISALANSWER aa,EMPLOYEE e  WHERE aa.OBJ =e.EMPNO AND name = '"+name+"' AND substr(queno,1,4)= "+pastyear+" GROUP BY OBJ ";
+					rs = stmt.executeQuery(myallAvg);
+					while (rs.next()) {
+						System.out.println("-------------------");
+						System.out.println("총 평균 : " + rs.getString(1));
+					}
+
+				} catch (SQLException e) {
+					System.out.println("SQL예외: " + e.getMessage());
+				}
 	}
 
 }

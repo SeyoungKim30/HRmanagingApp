@@ -49,7 +49,7 @@ INSERT INTO APPRAISALANSWER VALUES (20224,5,2022201023,2022301022) ;
 INSERT INTO APPRAISALANSWER VALUES (20225,3,2022201023,2022301022) ;
 INSERT INTO APPRAISALANSWER VALUES (20226,1,2022201023,2022301022) ;
 INSERT INTO APPRAISALANSWER VALUES (20227,2,2022201023,2022301022) ;
-DELETE FROM appraisalanswer WHERE sub=2022101001;
+DELETE FROM appraisalanswer WHERE OBJ=2022101026;
 --UPDATE appraisalQue SET QUESTION ='업무 방향성을 명확히 제시하는가' WHERE queno=20227;
 
 --e2의 평가결과
@@ -58,14 +58,13 @@ SELECT e2.NAME, QUEstion, point, e.name "평가자" FROM APPRAISALQUE aq, APPRAI
 --사람별 평균점수
 SELECT name, ROUND(avg(point),3) FROM APPRAISALANSWER aa, EMPLOYEE e WHERE aa.OBJ =e.EMPNO GROUP BY name ;
 
---사람별/항목별 평균 점수
-SELECT obj, queno,ROUND(avg(point),3) FROM APPRAISALANSWER aa GROUP BY obj, QUENO ;
+--사람별/항목별 평균 점수, 올해만
+SELECT Question, ROUND(avg(point),3) FROM APPRAISALANSWER aa,appraisalQue Q WHERE q.queno=aa.QUENO  GROUP BY obj, Question ;
 --사람별/항목별 이름 나오게 평균점수
 SELECT DISTINCT name, question , 평균점수 
 FROM appraisalQue Q, EMPLOYEE e ,(SELECT obj, queno, ROUND(avg(point),3) "평균점수" FROM APPRAISALANSWER aa GROUP BY obj, QUENO) "그룹테이블" 
 WHERE q.queno=그룹테이블.queno AND 그룹테이블.obj = e.empno
-AND name = '임팔득'
-;
+AND name = '김곽칠';
 
 --부서별 총 평균 점수
 SELECT dname, ROUND(avg(point),3)  FROM APPRAISALANSWER a , EMPLOYEE e,DEPARTMENT d  WHERE e.EMPNO =a.OBJ AND d.DEPTNO =e.DEPTNO GROUP BY dname ;
