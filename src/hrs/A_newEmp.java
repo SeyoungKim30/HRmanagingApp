@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import vos.DB;
 import vos.Employee;
 
 //등록 수정 삭제
@@ -117,7 +118,7 @@ public class A_newEmp {
 					System.out.println("사원번호를 잘못 입력했습니다");
 					break;
 				}
-				System.out.println("1.주소\t2.학력\t3.부서번호\t4.직급\t5.이름");
+				System.out.println("1.주소\t2.학력\t3.이름");
 				String objCol = sc.nextLine();
 				switch (objCol) {
 				case "1":
@@ -127,12 +128,6 @@ public class A_newEmp {
 					colname = "educational";
 					break;
 				case "3":
-					colname = "deptno";
-					break;
-				case "4":
-					colname = "RANK";
-					break;
-				case "5":
 					colname = "NAME";
 					break;
 				default:
@@ -144,15 +139,6 @@ public class A_newEmp {
 
 				System.out.println("변경할 내용을 입력하세요");
 				newSet = sc.nextLine();
-				// 부서번호일때 있는 부서번호인지 확인
-					if (colname == "deptno") {
-					rs = stmt.executeQuery("select * from Department where deptno =" + newSet);
-					if (!rs.next()) {
-						System.out.println("없는 부서번호입니다");
-						break;
-					}
-				}
-				// 부서번호 확인 끝
 				String modiSql = "UPDATE EMPLOYEE SET " + colname + "= '" + newSet + "' WHERE empno = '" + empno + "'";
 				if (stmt.executeUpdate(modiSql) == 1) {
 					System.out.println("변경되었습니다.");

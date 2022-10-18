@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import vos.DB;
 import vos.Department;
 
 //부서정보 검색, 새 부서 생성, 부서 정보 수정

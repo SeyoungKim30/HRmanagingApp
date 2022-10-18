@@ -16,6 +16,7 @@ private String educational;
 private int deptno;
 private String rank;
 private String pass;
+private boolean access = false;
 public Employee() {
 	// TODO Auto-generated constructor stub
 }
@@ -40,6 +41,21 @@ public void printAll() {
 	System.out.println("부서번호:\t"+deptno);
 	System.out.println("직급\t"+rank);
 	System.out.println("━━━━━━━━━━━━━━━");
+}
+
+public void setAccess() {
+	if(rank.equals("사장")) {
+		this.access= true;
+	}
+	if(rank.equals("이사")) {
+		this.access= true;
+	}
+	if(deptno==10) {
+		this.access= true;
+	}
+}
+public boolean getAccess() {
+	return access;
 }
 
 public int getEmpno() {

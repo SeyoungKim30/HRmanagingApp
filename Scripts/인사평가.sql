@@ -21,13 +21,15 @@ ALTER TABLE appraisalAnswer ADD PRIMARY KEY (Queno,sub,obj);
 ALTER TABLE appraisalAnswer ADD FOREIGN KEY ( Queno ) REFERENCES appraisalQue (Queno);
 ALTER TABLE appraisalAnswer ADD FOREIGN KEY ( sub ) REFERENCES Employee (EMPNO);
 ALTER TABLE appraisalAnswer ADD FOREIGN KEY ( obj ) REFERENCES Employee (EMPNO);
+ALTER TABLE appraisalAnswer ADD CHECK (point BETWEEN 1 AND 5)  ;
 
 SELECT * FROM EMPLOYEE e ;
+SELECT * FROM DEPARTMENT d  ;
 SELECT * FROM appraisalQue ;
 SELECT * FROM APPRAISALANSWER ;
 
 --질문 입력할때
---INSERT INTO appraisalQue VALUES (2022||seqforAppraQ.nextval ,'업무 협조도');
+--INSERT INTO appraisalQue VALUES (2021||seqforAppraQ.nextval ,'업무 협조도');
 --INSERT INTO appraisalQue VALUES (2022||seqforAppraQ.nextval ,'업무시간 준수 정도');
 --INSERT INTO appraisalQue VALUES (2022||seqforAppraQ.nextval ,'업무 외 태도');
 
@@ -43,12 +45,36 @@ INSERT INTO APPRAISALANSWER VALUES (20225,5,2022201020,2022701025) ;
 INSERT INTO APPRAISALANSWER VALUES (20226,5,2022201020,2022701025) ;
 INSERT INTO APPRAISALANSWER VALUES (20227,5,2022201020,2022701025) ;
 
+INSERT INTO APPRAISALANSWER VALUES (20224,5,2022201023,2022301022) ;
+INSERT INTO APPRAISALANSWER VALUES (20225,3,2022201023,2022301022) ;
+INSERT INTO APPRAISALANSWER VALUES (20226,1,2022201023,2022301022) ;
+INSERT INTO APPRAISALANSWER VALUES (20227,2,2022201023,2022301022) ;
+DELETE FROM appraisalanswer WHERE sub=2022101001;
+--UPDATE appraisalQue SET QUESTION ='업무 방향성을 명확히 제시하는가' WHERE queno=20227;
 
 --e2의 평가결과
-SELECT e2.NAME, QUEstion, point, e.name "평가자" FROM APPRAISALQUE aq, APPRAISALANSWER aa, EMPLOYEE e, EMPLOYEE e2  WHERE aq.Queno=aa.QUENO AND e.EMPNO = aa.SUB AND e2.EMPNO = aa.obj ;
-SELECT e2.NAME, QUEstion, point 
-FROM APPRAISALQUE aq, APPRAISALANSWER aa, EMPLOYEE e, EMPLOYEE e2  
-WHERE aq.Queno=aa.QUENO AND e.EMPNO = aa.SUB AND e2.EMPNO = aa.obj ;
+SELECT e2.NAME, QUEstion, point, e.name "평가자" FROM APPRAISALQUE aq, APPRAISALANSWER aa, EMPLOYEE e, EMPLOYEE e2  WHERE aq.Queno=aa.QUENO AND e.EMPNO = aa.SUB AND e2.EMPNO = aa.obj AND obj=2022101026;
+
+--사람별 평균점수
+SELECT name, ROUND(avg(point),3) FROM APPRAISALANSWER aa, EMPLOYEE e WHERE aa.OBJ =e.EMPNO GROUP BY name ;
 
 --사람별/항목별 평균 점수
-SELECT obj, queno,avg(point) FROM APPRAISALANSWER aa GROUP BY obj, QUENO ;
+SELECT obj, queno,ROUND(avg(point),3) FROM APPRAISALANSWER aa GROUP BY obj, QUENO ;
+--사람별/항목별 이름 나오게 평균점수
+SELECT DISTINCT name, question , 평균점수 
+FROM appraisalQue Q, EMPLOYEE e ,(SELECT obj, queno, ROUND(avg(point),3) "평균점수" FROM APPRAISALANSWER aa GROUP BY obj, QUENO) "그룹테이블" 
+WHERE q.queno=그룹테이블.queno AND 그룹테이블.obj = e.empno
+AND name = '임팔득'
+;
+
+--부서별 총 평균 점수
+SELECT dname, ROUND(avg(point),3)  FROM APPRAISALANSWER a , EMPLOYEE e,DEPARTMENT d  WHERE e.EMPNO =a.OBJ AND d.DEPTNO =e.DEPTNO GROUP BY dname ;
+
+--부서별 항목별 점수
+SELECT dname, question , ROUND(avg(point),3)  FROM APPRAISALANSWER a , EMPLOYEE e,DEPARTMENT d, APPRAISALQUE aq WHERE e.EMPNO =a.OBJ AND d.DEPTNO =e.DEPTNO AND aq.QUENO =a.QUENO GROUP BY dname, Question  ;
+
+
+--2022년도 질문만
+SELECT * FROM APPRAISALQUE a  WHERE substr(queno,1,4)=2022;
+--나랑 같은 부서 사람들(나 빼고)
+select name from employee where deptno = 40 AND empno <> 내번호;

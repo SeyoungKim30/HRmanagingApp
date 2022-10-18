@@ -1,4 +1,4 @@
-package hrs;
+package vos;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -38,3 +38,5 @@ FROM employee e , DEPARTMENT d  WHERE d.DEPTNO (+)= e.DEPTNO GROUP BY d.DEPTNO) 
 where subde.부서번호 (+)= de.deptno
 AND (de.deptno like '%'||''||'%'
 OR de.dname LIKE '%'||''||'%');
+
+SELECT empno, pass FROM EMPLOYEE WHERE empno = '2022101001' AND pass = '12345'
