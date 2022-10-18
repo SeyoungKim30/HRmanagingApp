@@ -20,7 +20,8 @@ public class Welcome1 {
 //		ap.insertAns();
 //		ap.myAppre();
 //		ap.myApprePast();
-		ap.byQuebyEmp();
+//		ap.byQuebyEmp();
+		ap.byDept();
 		
 	}
 

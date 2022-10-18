@@ -200,4 +200,35 @@ public class Appre {
 				}
 	}
 
+	public void byDept() {	//부서별, 연도별, 전체, 항목별이랑 총평균
+		String dept="";
+		String pastyear="0";
+		System.out.println("부서와 연도를 공백으로 하면 모든 정보가 출력됩니다");
+		System.out.println("조회 대상 부서명을 입력하세요");
+		dept=sc.nextLine();
+		System.out.println("조회할 연도를 입력해주세요(YYYY)");
+		pastyear=sc.nextLine();
+		
+		String bydeptque="SELECT dname, question , ROUND(avg(point),3) 평균  FROM APPRAISALANSWER a , EMPLOYEE e,DEPARTMENT d, APPRAISALQUE aq WHERE e.EMPNO =a.OBJ AND d.DEPTNO =e.DEPTNO AND aq.QUENO =a.QUENO AND dname LIKE '%'||'"+dept+"'||'%' AND substr(aq.QUENO,1,4)LIKE '%'||'"+pastyear+"'||'%' GROUP BY dname, Question ORDER BY dname";
+		
+		try {
+			con = DB.con();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(bydeptque);
+			while (rs.next()) {
+				System.out.println(rs.getString("dname")+"┃"+rs.getString("QUESTION") + " :\t" + rs.getString("평균"));
+			}
+			String deptAllavg ="SELECT dname, ROUND(avg(point),3) 평균 FROM APPRAISALANSWER a , EMPLOYEE e,DEPARTMENT d  WHERE e.EMPNO =a.OBJ AND d.DEPTNO =e.DEPTNO AND dname LIKE '%'||'"+dept+"'||'%' AND substr(queno,1,4) LIKE '%'||'"+pastyear+"'||'%'  GROUP BY dname";
+			rs = stmt.executeQuery(deptAllavg);
+			while (rs.next()) {
+				System.out.println("-------------------");
+				System.out.println(rs.getString("dname") + "┃ 총 평균 : " + rs.getString("평균"));
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("SQL예외: " + e.getMessage());
+		}
+		
+	}
+	
 }
