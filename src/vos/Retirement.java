@@ -8,8 +8,10 @@ public class Retirement {
 	private String retireyear;
 	private String reason;
 	private String state;
-	String searchline = "SELECT e.empno,name,deptno,RANK, retireday,reason, state FROM retirement r, EMPLOYEE e  WHERE r.EMPNO =e.EMPNO ";
-	int howmanyquestion=0;
+	String searchline = 
+			"SELECT e.empno,name,deptno,RANK, retireday,reason, "
+		+ "state FROM retirement r, EMPLOYEE e  WHERE r.EMPNO =e.EMPNO ";
+	int filtercount=0;
 	int noEmpno=0;
 	int noName=0;
 	int noDeptno=0;
@@ -50,7 +52,7 @@ public class Retirement {
 	public void setEmpno(String empno) {
 		this.empno = empno;
 		searchline+="AND e.empno like '%'||?||'%' ";
-		noEmpno=++howmanyquestion;
+		noEmpno=++filtercount;
 	}
 
 	public String getName() {
@@ -60,7 +62,7 @@ public class Retirement {
 	public void setName(String name) {
 		this.name = name;
 		searchline+="AND name like '%'||?||'%' ";
-		noName=++howmanyquestion;
+		noName=++filtercount;
 	}
 
 	public String getDeptno() {
@@ -70,7 +72,7 @@ public class Retirement {
 	public void setDeptno(String deptno) {
 		this.deptno = deptno;
 		searchline+="AND deptno like '%'||?||'%' ";
-		noDeptno=++howmanyquestion;
+		noDeptno=++filtercount;
 	}
 
 	public String getRank() {
@@ -80,7 +82,7 @@ public class Retirement {
 	public void setRank(String rank) {
 		this.rank = rank;
 		searchline+="AND e.rank like '%'||?||'%' ";
-		noRank=++howmanyquestion;
+		noRank=++filtercount;
 	}
 
 	public String getRetireyear() {
@@ -90,7 +92,7 @@ public class Retirement {
 	public void setRetireyear(String retireyear) {
 		this.retireyear = retireyear;
 		searchline+="AND to_char(retireday,'yyyy') like '%'||?||'%' ";
-		noRetireyear=++howmanyquestion;
+		noRetireyear=++filtercount;
 	}
 
 	public String getReason() {
@@ -108,18 +110,18 @@ public class Retirement {
 	public void setState(String state) {
 		this.state = state;
 		searchline+="AND state like '%'||?||'%' ";
-		noState=++howmanyquestion;
+		noState=++filtercount;
 	}
 	public String getSearchline() {
 		return searchline;
 	}
 
-	public int getHowmanyquestion() {
-		return howmanyquestion;
+	public int getFiltercount() {
+		return filtercount;
 	}
 
-	public void setHowmanyquestion(int howmanyquestion) {
-		this.howmanyquestion = howmanyquestion;
+	public void setFiltercount(int filtercount) {
+		this.filtercount = filtercount;
 	}
 
 	public int getNoEmpno() {

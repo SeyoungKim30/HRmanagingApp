@@ -1,13 +1,10 @@
 package welcome;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import hrs.A_newEmp;
 import hrs.Appre;
 import hrs.Retiring;
+import payment.Saldao;
 import vos.Employee;
-import vos.Retirement;
 
 public class Welcome1 {
 	public static Employee user;
@@ -27,7 +24,11 @@ public class Welcome1 {
 		Retiring rt=new Retiring();
 	//	rt.applyretire();
 	//	rt.insertretire();
-		rt.selectApply(new Retirement());
+	///	rt.selectApply(new Retirement());
+	//	rt.changeState();
+		Saldao sa=new Saldao();
+		sa.insertPayDept();
+		
 		
 	}
 

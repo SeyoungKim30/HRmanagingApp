@@ -25,6 +25,8 @@ public class A_newEmp {
 	SimpleDateFormat formatyear = new SimpleDateFormat("yyyy");
 	String year = formatyear.format(today);
 
+
+	
 	// 사원 등록
 	public void registerEmp() {
 		System.out.println("새로운 사원의 등록을 시작합니다.");

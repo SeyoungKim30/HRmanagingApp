@@ -19,12 +19,15 @@ INSERT INTO retirement(empno,RETIREDAY,REASON) VALUES (2022301022,to_date('2022-
 INSERT INTO retirement VALUES (2022501028,to_date('2021-06-30','yyyy-mm-dd'),'계약만료','퇴사');
 DELETE retirement WHERE empno=2022101001;
 
---퇴사 신청자 보기 (신청)
+--퇴사 신청자 보기 (상태별)
 SELECT * FROM RETIREMENT r WHERE state = '신청';
 --퇴사 신청자 보기 (모두)(연도별)
-SELECT * FROM retirement WHERE to_char(retireday,'yyyy') LIKE '%'||'2021'||'%';
---퇴사 신청자 보기(이름검색)
-SELECT * FROM retirement r, EMPLOYEE e  WHERE r.EMPNO =e.EMPNO AND to_char(retireday,'yyyy') like '%'||'20'||'%' AND name like '%'||'고비빔'||'%' ;
+SELECT * FROM retirement WHERE to_char(retireday,'yyyy') LIKE '%'||'2022'||'%';
+--퇴사 신청자 보기(상태,이름,연도)
+SELECT e.empno,name,deptno,RANK, retireday,reason, state FROM retirement r, EMPLOYEE e  WHERE r.EMPNO =e.EMPNO  
+AND to_char(retireday,'yyyy') like '%'||''||'%' 
+AND name like '%'||''||'%' 
+AND state LIKE '%'||''||'%';
 --내 퇴사신청 상태 보기
 SELECT * FROM RETIREMENT r WHERE empno = '내번호';
 --퇴사 승인하기(신청-승인-퇴사)

@@ -142,12 +142,18 @@ public class Retiring {
 		try {
 			con = DB.con();
 			pstmt=con.prepareStatement(sql);
-			if(vo.getNoName()!=0)pstmt.setString(vo.getNoName(),vo.getName());
-			if(vo.getNoEmpno()!=0)pstmt.setString(vo.getNoEmpno(),vo.getEmpno());
-			if(vo.getNoDeptno()!=0)pstmt.setString(vo.getNoDeptno(),vo.getDeptno());
-			if(vo.getNoRank()!=0)pstmt.setString(vo.getNoRank(),vo.getRank());
-			if(vo.getNoRetireyear()!=0)pstmt.setString(vo.getNoRetireyear(),vo.getRetireyear());
-			if(vo.getNoState()!=0)pstmt.setString(vo.getNoState(),vo.getState());
+			if(vo.getNoName()!=0)
+				pstmt.setString(vo.getNoName(),vo.getName());
+			if(vo.getNoEmpno()!=0)
+				pstmt.setString(vo.getNoEmpno(),vo.getEmpno());
+			if(vo.getNoDeptno()!=0)
+				pstmt.setString(vo.getNoDeptno(),vo.getDeptno());
+			if(vo.getNoRank()!=0)
+				pstmt.setString(vo.getNoRank(),vo.getRank());
+			if(vo.getNoRetireyear()!=0)
+				pstmt.setString(vo.getNoRetireyear(),vo.getRetireyear());
+			if(vo.getNoState()!=0)
+				pstmt.setString(vo.getNoState(),vo.getState());
 			rs=pstmt.executeQuery();
 			while(rs.next()) {
 			rlist.add(new Retirement(rs.getString("empno"),rs.getString("name"),rs.getString("deptno"),rs.getString("rank"),rs.getString("retireday"),rs.getString("reason"),rs.getString("state")));
@@ -165,4 +171,37 @@ public class Retiring {
 		}
 	}
 
+	public void changeState() {
+		System.out.println("퇴사신청 상태를 변경할 사원의 사원번호를 입력하세요");
+		String empno=sc.nextLine();
+		System.out.println("변경할 상태를 입력하세요('신청','승인','퇴사','취소')");
+		String state=sc.nextLine();
+		String checksql="select * from RETIREMENT where empno = "+empno ;
+		String sql="UPDATE RETIREMENT SET STATE = '"+state+"' WHERE EMPNO ='"+empno+"'";
+		try {
+			con=DB.con();
+			con.setAutoCommit(false);
+			stmt=con.createStatement();
+			rs=stmt.executeQuery(checksql);
+			if(rs.next()) {
+			System.out.println(stmt.executeUpdate(sql)+"건의 상태가 변경되었습니다");
+			}else {
+				System.out.println("해당 사원의 퇴사신청 정보가 없습니다");
+			con.commit();
+			}
+     } catch (SQLException e) {
+		System.out.println("SQL예외: "+e.getMessage());
+		try {
+			con.rollback();
+		} catch (SQLException e1) {
+			System.out.println("롤백예외:" +e1.getMessage());
+		}
+		}catch(Exception e) {
+			System.out.println("일반예외:"+e.getMessage());
+		}
+		finally {
+			DB.close(rs, stmt, con);
+		}
+	}
 }
+
