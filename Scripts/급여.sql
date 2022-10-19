@@ -39,20 +39,25 @@ SELECT h.EMPNO, salary FROM history h WHERE h.empno !=(SELECT r.EMPNO FROM RETIR
 		AND (empno, MOVEDAY) IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno)  ;
 
 --모두에게 최근 월급 주기
+/*
 INSERT INTO PAY (empno,payday,salary) (
-SELECT h.EMPNO,to_date('2022-10-21','yyyy-mm-dd'),salary 
+SELECT h.EMPNO,to_date('2022-10-20','yyyy-mm-dd'),salary 
 FROM history h WHERE h.empno !=(SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사') 
 		AND (empno, MOVEDAY) 
 	IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno));
+	*/
 --확인
-SELECT * FROM pay WHERE PAYDAY = to_date('2022-10-21','yyyy-mm-dd') ;
+SELECT * FROM pay WHERE PAYDAY = to_date('2022-10-20','yyyy-mm-dd') ;
+DELETE pay WHERE PAYDAY = to_date('2022-10-20','yyyy-mm-dd') ;
 	
 --부서별로 월급 주기
+/*
 INSERT INTO PAY (empno,payday,salary) (
-SELECT h.EMPNO,to_date('1999-10-21','yyyy-mm-dd'),salary 
+SELECT h.EMPNO,to_date('2022-10-20','yyyy-mm-dd'),salary 
 FROM history h WHERE h.empno !=(SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사') 
 		AND (empno, MOVEDAY) 
 	IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno)AND deptno=20);
+	*/
 
 
 UPDATE pay SET salary = 300 WHERE empno IN (SELECT e.empno FROM PAY p , employee e  WHERE p.empno=e.EMPNO AND RANK = '사원');
