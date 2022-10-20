@@ -64,4 +64,26 @@ FROM history h WHERE h.empno !=(SELECT r.EMPNO FROM RETIREMENT r WHERE state LIK
 UPDATE pay SET bankAC = '신한85252-112-1123' WHERE EMPNO =2022101001;
 UPDATE pay SET bankAC = '국민81455-78879541' WHERE EMPNO =2022201023;
 
+/* 수당 */
+DROP TABLE EXTRAPAY CASCADE CONSTRAINTS;
 
+/* 수당 */
+CREATE TABLE EXTRAPAY (
+	EMPNO CHAR(10)  NOT NULL, /* 사원번호 */
+	payno NUMBER, /* 수당번호 */
+	amount NUMBER, /* 금액 */
+	state VARCHAR2(50), /* 상태 */
+	payday DATE /* 지급일 */
+);
+ALTER TABLE EXTRAPAY ADD CONSTRAINT FK_Employee_TO_EXTRAPAY
+		FOREIGN KEY ( EMPNO ) REFERENCES Employee ( EMPNO );
+ALTER TABLE EXTRAPAY ADD CHECK (state IN ('신청','승인','지급'));
+
+SELECT * FROM extrapay;
+	
+INSERT INTO extrapay (empno,payno,amount,state) VALUES (2022201023,origin.nextval||10,140000,'신청'); 
+UPDATE extrapay SET STATE = '승인' WHERE EMPNO ='2022101001' AND state ='신청' AND amount = 140000;
+UPDATE extrapay SET STATE = '지급', payday=sysdate WHERE EMPNO ='2022101001' AND state ='승인' AND amount = 150000;
+
+SELECT empno,to_char(payday,'YYYY'),to_char(payday,'mm'),salary FROM pay WHERE empno =2022101001 ;
+SELECT empno,amount,to_char(payday,'YYYY'),to_char(payday,'mm') FROM extrapay WHERE empno =2022101001 AND payday IS NOT NULL;

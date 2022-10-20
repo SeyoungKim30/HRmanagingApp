@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 import hrs.A_newEmp;
+import schedule.WorkTableDAO;
 import vos.DB;
 import vos.Employee;
 

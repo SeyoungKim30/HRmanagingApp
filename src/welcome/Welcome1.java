@@ -3,16 +3,21 @@ package welcome;
 import hrs.A_newEmp;
 import hrs.Appre;
 import hrs.Retiring;
+import payment.ExtraDao;
+import payment.Paystub;
 import payment.Saldao;
 import schedule.SCDdao;
+import schedule.WorkTableDAO;
 import vos.Employee;
 
 public class Welcome1 {
 	public static Employee user;
 	
 	public static void main(String[] args) {
-//		Login lg=new Login();
-//		lg.login();
+		Login lg=new Login();
+		lg.login();
+		WorkTableDAO workTableDAO = new WorkTableDAO();
+		workTableDAO.timeon();
 	//	System.out.println("관리자 권한: "+user.getAccess());
 		Appre ap=new Appre();
 		A_newEmp emp=new A_newEmp();
@@ -33,9 +38,17 @@ public class Welcome1 {
 		SCDdao scd=new SCDdao();
 	//	scd.setScdbyDept();
 	//	scd.setScdbyEmp();
-//		scd.showScdDeptMonth();
+	//	scd.showScdDeptMonth();
 //		scd.showScdDeptDay();
-		scd.showScdDay();
+//		scd.showScdDay();
+		ExtraDao et=new ExtraDao();
+//		et.insertExtra();
+//		et.insertExtraAdmin();
+		Paystub ps=new Paystub();
+		ps.myMonthtotal();
+		ps.empMonthtotal();
+		workTableDAO.timeoff();
+
 	}
 
 }
