@@ -7,8 +7,10 @@ CREATE TABLE pay (
 	EMPNO CHAR(10)  NOT NULL, /* 사원번호 */
 	payday DATE, /* 지급일 */
 	salary NUMBER, /* 월급여 */
-	bankAC NUMBER /* 급여계좌 */
+	bankAC VARCHAR2(30) /* 급여계좌 */
 );
+ALTER TABLE SCOTT.PAY MODIFY BANKAC VARCHAR2(30);
+
 
 ALTER TABLE pay ADD CONSTRAINT FK_Employee_TO_pay FOREIGN KEY ( EMPNO ) REFERENCES Employee ( EMPNO );
 --ALTER TABLE history ADD salary NUMBER ;
@@ -58,7 +60,8 @@ FROM history h WHERE h.empno !=(SELECT r.EMPNO FROM RETIREMENT r WHERE state LIK
 		AND (empno, MOVEDAY) 
 	IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno)AND deptno=20);
 	*/
+--급여 지급방식 수정
+UPDATE pay SET bankAC = '신한85252-112-1123' WHERE EMPNO =2022101001;
+UPDATE pay SET bankAC = '국민81455-78879541' WHERE EMPNO =2022201023;
 
 
-UPDATE pay SET salary = 300 WHERE empno IN (SELECT e.empno FROM PAY p , employee e  WHERE p.empno=e.EMPNO AND RANK = '사원');
-UPDATE pay SET payday = SYSDATE-91 WHERE payday IS NULL ;

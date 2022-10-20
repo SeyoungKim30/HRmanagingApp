@@ -46,6 +46,8 @@ public class A_newEmp {
 		String rank = sc.nextLine();
 		System.out.println("입사일");
 		String joindate = sc.nextLine();
+		System.out.println("급여");
+		String salary = sc.nextLine();
 
 		String pass = createpass(); // 랜덤생성
 
@@ -64,7 +66,7 @@ public class A_newEmp {
 					+ rank + "','" + pass + "')";
 			stmt.execute(registerEmp);
 			String insertHistory = "insert into History values (" + year + "||" + deptno + "||ORIGIN.currval"
-					+ ",to_date('" + joindate + "','YYYY-MM-DD'),'" + rank + "'," + deptno + ")";
+					+ ",to_date('" + joindate + "','YYYY-MM-DD'),'" + rank + "'," + deptno + salary+ ")";
 			stmt.execute(insertHistory);
 			con.commit();
 		} catch (SQLException e) {
@@ -204,8 +206,10 @@ public class A_newEmp {
 		System.out.println("직급을 입력하세요");
 		String rank = sc.nextLine();
 		System.out.println("부서번호를 입력하세요");
-			String deptno = sc.nextLine();
-			String ins = "insert into history values (" + empno + ",to_date('" + moveday + "','YYYY-MM-DD'),'" + rank+"'," + deptno + ")";
+		String deptno = sc.nextLine();
+		System.out.println("급여를 입력하세요");
+		String salary = sc.nextLine();
+			String ins = "insert into history values (" + empno + ",to_date('" + moveday + "','YYYY-MM-DD'),'" + rank+"'," + deptno + salary +")";
 			try {
 				con = DB.con();
 				con.setAutoCommit(false);
