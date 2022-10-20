@@ -4,14 +4,15 @@ import hrs.A_newEmp;
 import hrs.Appre;
 import hrs.Retiring;
 import payment.Saldao;
+import schedule.SCDdao;
 import vos.Employee;
 
 public class Welcome1 {
 	public static Employee user;
 	
 	public static void main(String[] args) {
-		Login lg=new Login();
-	//	lg.login();
+//		Login lg=new Login();
+//		lg.login();
 	//	System.out.println("관리자 권한: "+user.getAccess());
 		Appre ap=new Appre();
 		A_newEmp emp=new A_newEmp();
@@ -27,9 +28,14 @@ public class Welcome1 {
 	///	rt.selectApply(new Retirement());
 	//	rt.changeState();
 		Saldao sa=new Saldao();
-		sa.insertPayDept();
-		
-		
+	//	sa.insertPayDept();
+	//	sa.updateBankac();
+		SCDdao scd=new SCDdao();
+	//	scd.setScdbyDept();
+	//	scd.setScdbyEmp();
+//		scd.showScdDeptMonth();
+//		scd.showScdDeptDay();
+		scd.showScdDay();
 	}
 
 }

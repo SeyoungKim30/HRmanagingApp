@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 import vos.DB;
+import welcome.Welcome1;
 
 public class Saldao {
 	private Connection con;
@@ -107,7 +108,32 @@ public class Saldao {
 	}
 	
 	}
-
+	
+	public void updateBankac() {	//자기 계좌번호 바꾸기
+		System.out.println("변경할 계좌번호를 입력하세요");
+		String ac=sc.nextLine();
+		String sql="UPDATE pay SET bankAC = '"+ac+"' WHERE EMPNO ="+ Welcome1.user.getEmpno() ;
+		try {
+			con=DB.con();
+			con.setAutoCommit(false);
+			stmt=con.createStatement();
+			stmt.executeUpdate(sql);
+			System.out.println("변경 완료");
+			con.commit();
+     } catch (SQLException e) {
+		System.out.println("SQL예외: "+e.getMessage());
+		try {
+			con.rollback();
+		} catch (SQLException e1) {
+			System.out.println("롤백예외:" +e1.getMessage());
+		}
+		}catch(Exception e) {
+			System.out.println("일반예외:"+e.getMessage());
+		}
+		finally {
+			DB.close(rs, stmt, con);
+		}
+	}
 	//수당 주세요 insert
 	//수당 주고나서 update
 	//정보 보기 : 지금까지 받은거, 올해 받은거, 급여만, 수당
