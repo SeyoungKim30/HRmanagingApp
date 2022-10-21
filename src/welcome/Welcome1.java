@@ -14,20 +14,20 @@ public class Welcome1 {
 	public static Employee user;
 	
 	public static void main(String[] args) {
-		Login lg=new Login();
-		lg.login();
-		WorkTableDAO workTableDAO = new WorkTableDAO();
-		workTableDAO.timeon();
+	//	Login lg=new Login();
+//		lg.login();
+//		WorkTableDAO workTableDAO = new WorkTableDAO();
+//		workTableDAO.timeon();
 	//	System.out.println("관리자 권한: "+user.getAccess());
-		Appre ap=new Appre();
-		A_newEmp emp=new A_newEmp();
+//		Appre ap=new Appre();
+//		A_newEmp emp=new A_newEmp();
 //		emp.registerEmp();
 //		ap.insertAns();
 //		ap.myAppre();
 //		ap.myApprePast();
 //		ap.byQuebyEmp();
 //		ap.byDept();
-		Retiring rt=new Retiring();
+//		Retiring rt=new Retiring();
 	//	rt.applyretire();
 	//	rt.insertretire();
 	///	rt.selectApply(new Retirement());
@@ -35,7 +35,7 @@ public class Welcome1 {
 		Saldao sa=new Saldao();
 	//	sa.insertPayDept();
 	//	sa.updateBankac();
-		SCDdao scd=new SCDdao();
+//		SCDdao scd=new SCDdao();
 	//	scd.setScdbyDept();
 	//	scd.setScdbyEmp();
 	//	scd.showScdDeptMonth();
@@ -45,9 +45,9 @@ public class Welcome1 {
 //		et.insertExtra();
 //		et.insertExtraAdmin();
 		Paystub ps=new Paystub();
-		ps.myMonthtotal();
+//		ps.myMonthtotal();
 		ps.empMonthtotal();
-		workTableDAO.timeoff();
+//		workTableDAO.timeoff();
 
 	}
 

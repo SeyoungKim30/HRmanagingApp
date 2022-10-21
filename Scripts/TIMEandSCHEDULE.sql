@@ -25,7 +25,7 @@ ALTER TABLE WORKTABLE
 
 --출근 스케줄 입력 : 모두
 INSERT INTO schedule(empno,intime,outtime) (
-SELECT e.empno , to_date('2022-10-16 10:00','yyyy-mm-dd HH24:MI'),to_date('2022-10-19 18:00','yyyy-mm-dd HH24:MI')
+SELECT e.empno , to_date('2022-10-22 10:00','yyyy-mm-dd HH24:MI'),to_date('2022-10-22 18:00','yyyy-mm-dd HH24:MI')
 FROM employee e WHERE e.empno !=(SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사')
 );
 
@@ -86,6 +86,9 @@ WHERE EMPNO LIKE 2022101026 AND TIMEON < to_date('2022-10-20 18:00','yyyy-mm-dd 
 AND TIMEON+1 > to_date('2022-10-20 09:00','yyyy-mm-dd HH24:MI')
 AND TIMEOFF is NULL;
 --DELETE worktable WHERE empno = 2022101001 AND TIMEOFF is NULL ;
+--INSERT INTO worktable VALUES (2022101026,to_date('2022-10-19 09:08','yyyy-mm-dd HH24:MI'), to_date('2022-10-19 19:11','yyyy-mm-dd HH24:MI') );
+--INSERT INTO worktable VALUES (2022101026,to_date('2022-10-21 10:05','yyyy-mm-dd HH24:MI'), to_date('2022-10-21 17:11','yyyy-mm-dd HH24:MI') );
+--INSERT INTO worktable VALUES (2022101026,to_date('2022-10-22 08:00','yyyy-mm-dd HH24:MI'), to_date('2022-10-22 20:11','yyyy-mm-dd HH24:MI') );
 
 UPDATE worktable SET TIMEOFF = sysdate
 WHERE EMPNO LIKE Welcome1.user.getEmpno() AND TIMEON < sysdate

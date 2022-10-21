@@ -58,7 +58,7 @@ public class Paystub {
 			System.out.println(pp.getYear()+"년 "+pp.getMonth()+"월 " + pp.getCate() +" : " +pp.getAmount());
 		totalpay+=pp.getAmount();
 		}
-		System.out.print("━━━━━━━━총 소득: "+totalpay+" ━━━━━━━━");
+		System.out.println("━━━━━━━━총 소득: "+totalpay+" ━━━━━━━━");
 	}
 	public void empMonthtotal() {	
 		System.out.println("조회할 사원 번호 입력:");
@@ -78,9 +78,9 @@ public class Paystub {
 	}
 	rs=stmt.executeQuery(sqlext);
 	while(rs.next()) {
-		String month = rs.getString("2");
-		String year = rs.getString("1");
-		int amount  = rs.getInt("3");
+		String month = rs.getString(2);
+		String year = rs.getString(1);
+		int amount  = rs.getInt(3);
 		String cate = "수당";
 		plist.add(new Pay(empno,month,year,amount,cate));
 	}			
