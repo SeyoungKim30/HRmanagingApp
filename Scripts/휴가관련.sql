@@ -47,7 +47,7 @@ FROM
 	FROM history h GROUP BY empno));
 */
 --휴가신청하기
-SELECT * FROM schedule;
+SELECT * FROM schedule ORDER BY intime;
 SELECT * FROM dayoff;
 UPDATE dayoff --2일 쓸거면 시작일 받고 2일 받아서 자바에서 for문으로 반복실행해주기
 	SET applyday = to_date('2022-10-24','yyyy-mm-dd') ,
@@ -73,11 +73,11 @@ INSERT INTO schedule(empno,intime,OUTTIME)
 
 
 --업데이트 할때 담당자한테 신청 들어온거 있는지 보여주기 
-SELECT empno, apply FROM dayoff WHERE apply IS NOT NULL;
+SELECT empno, applyday FROM dayoff WHERE applyday IS NOT NULL;
 --돌려주면서 신청서 지우기
 UPDATE dayoff SET usable = usable + 3, spend = spend - 3 , applyday = NULL, appyduring = null WHERE empno=2022701025;
 --승인하고 신청서 지우기
-UPDATE dayoff SET applyday = NULL, applyduring = null WHERE empno=2022201023;
+UPDATE dayoff SET applyday = NULL, applyduring = null WHERE empno=2022201027;
 
 
 --insert schedule 문
@@ -88,5 +88,11 @@ WHERE NOT EXISTS (SELECT EMPNO  FROM schedule WHERE trunc(intime,'dd') = to_date
 */
 --연차수당 : 일당, 남은날짜로 extrapay 신청하기, 상태는 승인
 SELECT * FROM EXTRAPAY e ;
-INSERT INTO extrapay(empno, payno,amount,state) (SELECT empno,연차수당번호||시퀀스 ,usable*일당);
+SELECT dd.empno,origin.nextval||4, usable * salary/200*1.5
+FROM dayoff dd,(SELECT h.EMPNO, salary FROM history h WHERE (empno, MOVEDAY) IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno) ) hi
+WHERE dd.EMPNO =hi.empno AND usable>0 ;
 
+INSERT INTO extrapay(empno, payno,amount,state) 
+(SELECT dd.empno, origin.nextval||4 , ROUND(usable * salary/200*1.5) , '승인'
+FROM dayoff dd,(SELECT h.EMPNO, salary FROM history h WHERE (empno, MOVEDAY) IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno) ) hi
+WHERE dd.EMPNO =hi.empno AND usable>0);

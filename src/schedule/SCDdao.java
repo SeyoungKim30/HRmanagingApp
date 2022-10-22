@@ -211,6 +211,54 @@ public class SCDdao {
 			DB.close(rs, stmt, con);
 		}
 	}
+	
+	public void showOvertime() {
+		System.out.println("조회 달(yyyy-mm): ");
+		String yymm = sc.nextLine();
+		System.out.println("조회할 사원 번호");
+		String empno = sc.nextLine();
+		String sql = "SELECT DISTINCT w.empno, timeon 실제출근, intime 출근일정 , timeoff 실제퇴근, outtime 퇴근일정, \r\n"
+				+ "	(intime - timeon)*24 일찍온시간 ,(timeoff-outtime)*24 초과시간, "
+				+ "round(nvl(nvl((intime - timeon)*24  + (timeoff-outtime)*24 , (outtime-intime)*24),(timeoff-timeon)*24)) 총초과\r\n"
+				+ "FROM WORKTABLE w FULL OUTER JOIN SCHEDULE s ON Trunc(w.TIMEON,'dd') =TRUNC(s.INTIME,'dd')\r\n"
+				+ "WHERE w.empno like '%'||"+empno+"||'%' \r\n"
+				+ "AND TRUNC(s.INTIME,'mm') like to_date('"+yymm+"','yyyy-mm') ORDER BY timeon";
+		try {
+			con = DB.con();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+			System.out.println("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+			System.out.println(" 출근일정\t━━━━━━━━━━━━\t실제출근\t━━━━━━━━━━━━\t퇴근일정\t━━━━━━━━━━━━\t실제퇴근\t━━━━━━━━━━━━\t초과근무");
+			System.out.println(" ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+			while (rs.next()) {
+				System.out.print(" "+rs.getString("출근일정") + "\t");
+				System.out.print(" "+rs.getString("실제출근") + "\t");
+				System.out.print(" "+rs.getString("퇴근일정") + "\t");
+				System.out.print(" "+rs.getString("실제퇴근") + "\t");
+				System.out.print(" "+rs.getString("총초과") + "시간 \n");
+			}
+			System.out.println(" ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+	
+		String totalover="SELECT sum(총초과) FROM ( SELECT DISTINCT timeon,intime, \r\n"
+				+ "round(nvl(nvl((intime - timeon)*24  + (timeoff-outtime)*24 , (outtime-intime)*24),(timeoff-timeon)*24)) 총초과\r\n"
+				+ "FROM WORKTABLE w FULL OUTER JOIN SCHEDULE s ON TRUNC(s.INTIME,'dd') =Trunc(w.TIMEON,'dd') \r\n"
+				+ "WHERE w.empno like '%'||"+empno+"||'%' AND TRUNC(s.INTIME,'mm') like to_date('"+yymm+"','yyyy-mm'))";
+		
+		rs2=stmt.executeQuery(totalover);
+		if(rs2.next()) {
+			System.out.println(yymm+"의 초과근무시간은 "+rs2.getString(1)+" 시간 입니다");
+			System.out.println("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+		}
+		} catch (SQLException e) {
+			System.out.println("SQL예외: " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("일반예외:" + e.getMessage());
+		} finally {
+			DB.close(rs, stmt, con);
+		}
+		
+		
+	}
 	/*
 	 * --출근 스케줄 보기 : 전체/연월 입력 SELECT * FROM SCHEDULE s WHERE trunc(intime,'mm') IN
 	 * to_date('2022-09','yyyy-mm'); --출근 스케줄 보기 : 전체/특정날짜입력 SELECT * FROM SCHEDULE

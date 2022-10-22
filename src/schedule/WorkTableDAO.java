@@ -54,13 +54,12 @@ public class WorkTableDAO {
 
 	String sql="UPDATE worktable SET TIMEOFF = sysdate\r\n"
 				+ "WHERE EMPNO LIKE "+Welcome1.user.getEmpno()+" AND TIMEON < sysdate\r\n"
-				+ "AND TIMEON+1 > sysdate\r\n"
-				+ "AND TIMEOFF is NULL";
-		try {
+				+ "AND TIMEON+1 > sysdate AND TIMEOFF is NULL";
+	try {
 			con=DB.con();
 			con.setAutoCommit(false);
 			stmt=con.createStatement();
-			stmt.executeUpdate(sql);
+			System.out.println(stmt.executeUpdate(sql)+"로그아웃");
 			con.commit();
      } catch (SQLException e) {
 		System.out.println("SQL예외: "+e.getMessage());

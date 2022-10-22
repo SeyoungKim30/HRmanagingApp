@@ -81,9 +81,9 @@ UPDATE worktable SET timeoff =to_date('2022-10-17 18:00','yyyy-mm-dd HH24:MI') W
 UPDATE worktable SET timeoff =to_date('2022-10-16 18:00','yyyy-mm-dd HH24:MI') WHERE EMPNO LIKE 2022101026 AND TIMEON =to_date('2022-10-16 09:00','yyyy-mm-dd HH24:MI');
 
 --퇴근 : 출근일보단 뒤지만 24시간이 지나지 않았고 타임스탬프가 비어있는 칸에 찍기
-UPDATE worktable SET TIMEOFF =to_date('2022-10-20 18:00','yyyy-mm-dd HH24:MI')
-WHERE EMPNO LIKE 2022101026 AND TIMEON < to_date('2022-10-20 18:00','yyyy-mm-dd HH24:MI')
-AND TIMEON+1 > to_date('2022-10-20 09:00','yyyy-mm-dd HH24:MI')
+UPDATE worktable SET TIMEOFF =to_date('2022-10-23 03:40','yyyy-mm-dd HH24:MI')
+WHERE EMPNO LIKE 2022501030 AND TIMEON < to_date('2022-10-23 03:40','yyyy-mm-dd HH24:MI')
+AND TIMEON+1 > to_date('2022-10-23 03:40','yyyy-mm-dd HH24:MI')
 AND TIMEOFF is NULL;
 --DELETE worktable WHERE empno = 2022101001 AND TIMEOFF is NULL ;
 --INSERT INTO worktable VALUES (2022101026,to_date('2022-10-19 09:08','yyyy-mm-dd HH24:MI'), to_date('2022-10-19 19:11','yyyy-mm-dd HH24:MI') );
@@ -91,7 +91,7 @@ AND TIMEOFF is NULL;
 --INSERT INTO worktable VALUES (2022101026,to_date('2022-10-22 08:00','yyyy-mm-dd HH24:MI'), to_date('2022-10-22 20:11','yyyy-mm-dd HH24:MI') );
 
 UPDATE worktable SET TIMEOFF = sysdate
-WHERE EMPNO LIKE Welcome1.user.getEmpno() AND TIMEON < sysdate
+WHERE EMPNO LIKE 2022201020 AND TIMEON < sysdate
 AND TIMEON+1 > sysdate
 AND TIMEOFF is NULL;
 

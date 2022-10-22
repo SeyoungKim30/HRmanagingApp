@@ -30,6 +30,13 @@ public class DayoffDao {
 			con = DB.con();
 			con.setAutoCommit(false);
 			stmt = con.createStatement();
+			stmt2 = con.createStatement();
+			String offsql="INSERT INTO extrapay(empno, payno,amount,state) \r\n"
+					+ "(SELECT dd.empno,origin.nextval||4, usable * salary/200*1.5\r\n"
+					+ "FROM dayoff dd,(SELECT h.EMPNO, salary FROM history h WHERE (empno, MOVEDAY) IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno) ) hi\r\n"
+					+ "WHERE dd.EMPNO =hi.empno AND usable>0)";
+			System.out.println(stmt2.executeUpdate(offsql)+"건 연차수당 입력");
+			
 			String sql = "INSERT INTO dayoff(empno,usable) (SELECT empno , \r\n" + "CASE WHEN 몇개월 < 12 THEN 몇개월\r\n"
 					+ "	WHEN 추가연차 <11 THEN 추가연차+15\r\n" + "	ELSE 25 END AS \"총연차\"\r\n" + "FROM \r\n"
 					+ "(SELECT empno,trunc((sysdate - min(moveday))/30) \"몇개월\", trunc(((sysdate - min(moveday))/365)/3) \"추가연차\"  \r\n"

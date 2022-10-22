@@ -1,5 +1,6 @@
 package welcome;
 
+import benefits.BenefitDao;
 import hrs.A_newEmp;
 import hrs.Appre;
 import hrs.Retiring;
@@ -9,6 +10,7 @@ import payment.Saldao;
 import schedule.DayoffDao;
 import schedule.SCDdao;
 import schedule.WorkTableDAO;
+import vos.Benefit;
 import vos.Employee;
 
 public class Welcome1 {
@@ -18,12 +20,12 @@ public class Welcome1 {
 		Login lg=new Login();
 		lg.login();
 		WorkTableDAO workTableDAO = new WorkTableDAO();
-		workTableDAO.timeon();
+//		workTableDAO.timeon();
 //	System.out.println("관리자 권한: "+user.getAccess());
-	 DayoffDao dad = new DayoffDao ();
+//	 DayoffDao dad = new DayoffDao ();
 //	 dad.resetDayoff();
-	 dad.useDayoff();
-	 dad.newapply();
+	// dad.useDayoff();
+//	 dad.newapply();
 //		Appre ap=new Appre();
 //		A_newEmp emp=new A_newEmp();
 //		emp.registerEmp();
@@ -37,24 +39,30 @@ public class Welcome1 {
 	//	rt.insertretire();
 	///	rt.selectApply(new Retirement());
 	//	rt.changeState();
-		Saldao sa=new Saldao();
+	//	Saldao sa=new Saldao();
 	//	sa.insertPayDept();
 	//	sa.updateBankac();
-//		SCDdao scd=new SCDdao();
+		SCDdao scd=new SCDdao();
 	//	scd.setScdbyDept();
-	//	scd.setScdbyEmp();
+//		scd.setScdbyEmp();
 	//	scd.showScdDeptMonth();
-//		scd.showScdDeptDay();
-//		scd.showScdDay();
+	//	scd.showScdDeptDay();
+	//	scd.showScdDay();
+	//	scd.showOvertime();
 		ExtraDao et=new ExtraDao();
 //		et.insertExtra();
 //		et.insertExtraAdmin();
 		Paystub ps=new Paystub();
 //		ps.myMonthtotal();
 //		ps.empMonthtotal();
-//		workTableDAO.timeoff();
+		BenefitDao bn = new BenefitDao();
+//		bn.insertBene();
+		bn.searchBene();
+		bn.getBene();
+		bn.myBene();
+		bn.whoattend();
 		
-
+		workTableDAO.timeoff();
 	}
 
 }
