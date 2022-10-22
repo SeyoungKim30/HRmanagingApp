@@ -16,4 +16,11 @@ SELECT (sysdate - to_date('2022-10-20 14:15:00','yyyy-mm-dd HH24:mi:ss'))*24*60 
 SELECT DISTINCT w.empno, timeon 출근시간, intime 스케줄 , timeoff 퇴근시간, outtime 최소퇴근, 
 	(intime - timeon)*24 일찍온시간 ,(timeoff-outtime)*24 초과시간, nvl(nvl((intime - timeon)*24  + (timeoff-outtime)*24 , (outtime-intime)*24),(timeoff-timeon)*24)
 FROM WORKTABLE w FULL OUTER JOIN SCHEDULE s ON TRUNC(s.INTIME,'dd') =Trunc(w.TIMEON,'dd') 
-WHERE w.empno=2022201020 ORDER BY timeon;
+ ORDER BY timeon;
+
+
+------날짜별
+SELECT DISTINCT w.empno, timeon 출근시간, intime 스케줄 , timeoff 퇴근시간, outtime 최소퇴근, 
+	(intime - timeon)*24 일찍온시간 ,(timeoff-outtime)*24 초과시간, nvl(nvl((intime - timeon)*24  + (timeoff-outtime)*24 , (outtime-intime)*24),(timeoff-timeon)*24)
+FROM WORKTABLE w FULL OUTER JOIN SCHEDULE s ON TRUNC(s.INTIME,'dd') =Trunc(w.TIMEON,'dd') ORDER BY timeon;
+--WHERE TRUNC(INTIME,'dd') = TRUNC(SYSDATE ,'dd') OR  TRUNC(timeon,'dd') = TRUNC(SYSDATE ,'dd')  ORDER BY timeon;

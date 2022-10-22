@@ -6,6 +6,7 @@ import hrs.Retiring;
 import payment.ExtraDao;
 import payment.Paystub;
 import payment.Saldao;
+import schedule.DayoffDao;
 import schedule.SCDdao;
 import schedule.WorkTableDAO;
 import vos.Employee;
@@ -14,11 +15,15 @@ public class Welcome1 {
 	public static Employee user;
 	
 	public static void main(String[] args) {
-	//	Login lg=new Login();
-//		lg.login();
-//		WorkTableDAO workTableDAO = new WorkTableDAO();
-//		workTableDAO.timeon();
-	//	System.out.println("관리자 권한: "+user.getAccess());
+		Login lg=new Login();
+		lg.login();
+		WorkTableDAO workTableDAO = new WorkTableDAO();
+		workTableDAO.timeon();
+//	System.out.println("관리자 권한: "+user.getAccess());
+	 DayoffDao dad = new DayoffDao ();
+//	 dad.resetDayoff();
+	 dad.useDayoff();
+	 dad.newapply();
 //		Appre ap=new Appre();
 //		A_newEmp emp=new A_newEmp();
 //		emp.registerEmp();
@@ -46,8 +51,9 @@ public class Welcome1 {
 //		et.insertExtraAdmin();
 		Paystub ps=new Paystub();
 //		ps.myMonthtotal();
-		ps.empMonthtotal();
+//		ps.empMonthtotal();
 //		workTableDAO.timeoff();
+		
 
 	}
 
