@@ -38,13 +38,13 @@ public class Retirement {
 	
 	public void printAll() {
 		System.out.println("━━━━━━━━━━━━━━━━━");
-		System.out.println("사원번호:\\t"+empno);
-		System.out.println("이름:\\t"+name);
-		System.out.println("부서번호:\\t"+deptno);
-		System.out.println("직급:\\t"+rank);
-		System.out.println("퇴직일:\\t"+retireyear);
-		System.out.println("사유:\\t"+reason);
-		System.out.println("처리상태:\\t"+state);
+		System.out.println("사원번호:\t"+empno);
+		System.out.println("이름:\t"+name);
+		System.out.println("부서번호:\t"+deptno);
+		System.out.println("직급:\t"+rank);
+		System.out.println("퇴직일:\t"+retireyear);
+		System.out.println("사유:\t"+reason);
+		System.out.println("처리상태:\t"+state);
 		
 	}
 	

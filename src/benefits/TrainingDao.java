@@ -1,6 +1,7 @@
 package benefits;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,38 +13,37 @@ import vos.Benefit;
 import vos.DB;
 import welcome.Welcome1;
 
-public class BenefitDao {
-
+public class TrainingDao {
 	private Connection con;
 	private Statement stmt;
 	private ResultSet rs;
 	Scanner sc = new Scanner(System.in);
 	
 	//입력
-	public void insertBene() {
-		System.out.println("복지명을 입력하세요");
+	public void insertTraining() {
+		System.out.println("교육명을 입력하세요");
 		String title=sc.nextLine();
-		System.out.println("직급 조건을 입력하세요(조건이 없으면 X 입력)");
-		String condi1=sc.nextLine();
-		System.out.println("부서 조건을 입력하세요(조건이 없으면 X 입력)");
-		String condi2=sc.nextLine();
-		System.out.println("마감일을 입력하세요(yyyymmdd)");
-		String reportDay=sc.nextLine();
-		System.out.println("시행비용은 얼마인가요");
-		String cost=sc.nextLine();
-		if(condi1.equals("X")) condi1="'||NULL||'";
-		if(condi2.equals("X")) condi2="'||NULL||'";
+		System.out.println("교육시행일을 입력하세요(yyyy-mm-dd 24:00)");
+		String trainday=sc.nextLine();
+		System.out.println("분류를 입력하세요");
+		String edutype=sc.nextLine();
+		System.out.println("최대 수강인원을 입력하세요");
+		String maxcnt=sc.nextLine();
+		System.out.println("강사를 입력하세요");
+		String lecturer=sc.nextLine();
 
 		try {
 			con=DB.con();
 			con.setAutoCommit(false);
-			String sql="INSERT INTO benefit VALUES (origin.nextval||"+reportDay+"+20,' "
-					+ title+"', '"+condi1+"' ,'"+condi2+"' , to_date('"+reportDay+"','yyyymmdd'), "+cost+")";
+			String sql="INSERT INTO training VALUES (origin.nextval||"+trainday.substring(2,6)+",'"+title
+					+ "', to_date('"+trainday+"','yyyy-mm-dd HH24:MI'),'"+edutype+"',"+maxcnt+",0,'"+lecturer+"')";
 			stmt=con.createStatement();
-			stmt.executeUpdate(sql);
+			System.out.print(stmt.executeUpdate(sql));
 			con.commit();
+			System.out.print("건 등록 완료\n");
      } catch (SQLException e) {
 		System.out.println("SQL예외: "+e.getMessage());
+		System.out.println("등록 실패");
 		try {
 			con.rollback();
 		} catch (SQLException e1) {
@@ -57,17 +57,17 @@ public class BenefitDao {
 		}
 	}
 	
-	//복지리스트 검색
-	public void searchBene() {
-		List<Benefit> blist=new ArrayList<Benefit>();
+	//교육리스트 검색
+	public void searchTraining() {
+		
 		try {
 			con=DB.con();
-			String findsql="SELECT LISTNUMBER, title,condi1,nvl(condi2,'조건없음'),reportday,cost FROM benefit ";
+			String findsql="SELECT * FROM TRAINING WHERE trainday >= SYSDATE ";
 			stmt=con.createStatement();
 			rs=stmt.executeQuery(findsql);
 			while(rs.next()) {
-			Benefit bb= new Benefit(rs.getString("LISTNUMBER"),rs.getString("title"),rs.getString(3),rs.getString(4),rs.getString("reportday"),rs.getString("cost"));
-			blist.add(bb);
+			System.out.println("교육번호\t교육명\t\t날짜      \t\t분류\t최대인원\t신청인원\t강사");
+			System.out.println(rs.getString("LISTNUMBER")+"\t"+rs.getString("title")+"\t"+rs.getString("TRAINDAY")+"\t"+rs.getString("TYPE")+"\t"+rs.getString("MAXATTENDEE")+"\t"+rs.getString("CRTATTENDEE")+"\t"+rs.getString("LECTURER"));
 			}
 			
      } catch (SQLException e) {
@@ -78,30 +78,20 @@ public class BenefitDao {
 		finally {
 			DB.close(rs, stmt, con);
 		}
-		for(Benefit b:blist) {
-			b.printAll();
-		}
 	}
 	//신청
-	public void getBene() {
-		Benefit bb;
-		String getsql="";
+	public void getTraining() {
+		System.out.println("신청하려는 교육 번호를 입력하세요");
+		String listnumber=sc.nextLine();
+		String trainingsql="UPDATE TRAINING SET CRTATTENDEE = CRTATTENDEE + 1 WHERE LISTNUMBER = "+listnumber+" AND CRTATTENDEE < MAXATTENDEE ";
+		String listsql="INSERT INTO ATTENDEELIST VALUES ("+listnumber+", "+Welcome1.user.getEmpno()+")";
 		try {
 			con=DB.con();
 			con.setAutoCommit(false);
-			System.out.println("신청하려는 복지 번호를 입력하세요");
-			String listnumber=sc.nextLine();
-			String findsql="SELECT title,nvl(condi1,'X'),nvl(condi2,'X'),reportday,cost FROM benefit where listnumber = "+listnumber;
 			stmt=con.createStatement();
-			rs=stmt.executeQuery(findsql);
-			while(rs.next()) {
-			bb= new Benefit(rs.getString("title"),rs.getString(2),rs.getString(3),rs.getString("reportday"),rs.getString("cost"));
-			getsql="INSERT INTO ATTENDEELIST \r\n"
-					+ "	(SELECT "+listnumber+" , "+Welcome1.user.getEmpno()+" FROM employee \r\n"
-					+ "	WHERE EMPNO ="+Welcome1.user.getEmpno()+" AND \"RANK\" LIKE '%'||'"+bb.getCondi1()+"'||'%' AND deptno LIKE '%'||'"+bb.getCondi2()+"'||'%')";
+			if(stmt.executeUpdate(trainingsql)+stmt.executeUpdate(listsql)==2) {
+				System.out.print("교육 신청");
 			}
-			
-			System.out.print(stmt.executeUpdate(getsql)+"신청");
 			con.commit();
 			System.out.print(" 완료\n");
      } catch (SQLException e) {
@@ -120,11 +110,12 @@ public class BenefitDao {
 		}
 	}
 	
-	//사람별 신청한 복지 리스트
-	public void myBene() {
+	//사람별 신청한 교육 리스트
+	public void myTrain() {
+		System.out.println("내가 신청한 교육");
 		try {
 			con=DB.con();
-			String sql="SELECT title FROM benefit b , ATTENDEELIST a WHERE a.LISTNUMBER =b.listnumber AND a.empno = "+Welcome1.user.getEmpno();
+			String sql="SELECT * FROM training t, ATTENDEELIST a WHERE t.LISTNUMBER =a.LISTNUMBER  AND empno= "+Welcome1.user.getEmpno();
 			stmt=con.createStatement();
 			rs=stmt.executeQuery(sql);
 			while(rs.next()) {
@@ -143,12 +134,11 @@ public class BenefitDao {
 	}
 	//복지별 신청한 사람들
 	public void whoattend() {
-		System.out.println("신청자를 확인할 복지 등록번호를 입력하세요");
+		System.out.println("신청자를 확인할 교육 번호를 입력하세요");
 		String listnumber=sc.nextLine();
 		try {
 			con=DB.con();
-			String sql="SELECT name FROM benefit b , ATTENDEELIST a,employee e \r\n"
-					+ "WHERE a.LISTNUMBER =b.listnumber AND e.EMPNO =a.EMPNO  AND a.listnumber= "+listnumber;
+			String sql="SELECT a.empno, e.name, e.deptno, e.rank FROM training t,ATTENDEELIST a,employee e WHERE t.LISTNUMBER =a.LISTNUMBER AND e.EMPNO =a.EMPNO AND a.LISTNUMBER = "+listnumber;
 			stmt=con.createStatement();
 			rs=stmt.executeQuery(sql);
 			while(rs.next()) {

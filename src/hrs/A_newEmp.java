@@ -66,7 +66,7 @@ public class A_newEmp {
 					+ rank + "','" + pass + "')";
 			stmt.execute(registerEmp);
 			String insertHistory = "insert into History values (" + year + "||" + deptno + "||ORIGIN.currval"
-					+ ",to_date('" + joindate + "','YYYY-MM-DD'),'" + rank + "'," + deptno + salary+ ")";
+					+ ",to_date('" + joindate + "','YYYY-MM-DD'),'" + rank + "'," + deptno +" , "+ salary+ ")";
 			stmt.execute(insertHistory);
 			con.commit();
 		} catch (SQLException e) {
