@@ -69,7 +69,7 @@ public class Appre {
 		// 연도에 맞게 질문 가져와서 출력 (질문 테이블)
 		String que = "SELECT * FROM APPRAISALQUE a  WHERE substr(queno,1,4)=" + year;
 		// 점수 입력(답변 테이블)
-		String anw = null; // "INSERT INTO APPRAISALANSWER VALUES (20225,4,2022201020,2022301022)";
+		String anw = null; 
 
 		try {
 			con = DB.con();
@@ -86,8 +86,8 @@ public class Appre {
 					int objnumber = rs2.getInt("Empno");
 					System.out.println(rs.getString("question")); // 뽑아온 질문 출력
 					String point = sc.nextLine();
-					anw = "INSERT INTO APPRAISALANSWER VALUES (" + rs.getInt("Queno") + "," + point + "," + objnumber
-							+ "," + Welcome1.user.getEmpno() + ")";
+					anw = "INSERT INTO APPRAISALANSWER VALUES (" + rs.getInt("Queno") + "," + point + "," + Welcome1.user.getEmpno()
+							+ "," + objnumber + ")";
 					try {
 						stmt3 = con.createStatement();
 						stmt3.executeUpdate(anw);

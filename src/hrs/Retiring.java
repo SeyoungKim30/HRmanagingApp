@@ -171,7 +171,7 @@ public class Retiring {
 		}
 	}
 
-	public void changeState() {
+	public void changeState() {		//퇴사 승인,취소 등 관리자메뉴
 		System.out.println("퇴사신청 상태를 변경할 사원의 사원번호를 입력하세요");
 		String empno=sc.nextLine();
 		System.out.println("변경할 상태를 입력하세요('신청','승인','퇴사','취소')");

@@ -123,19 +123,71 @@ WHERE (EMPNO ,MOVEDAY ) IN
 AND SALARY BETWEEN 200 AND 500
 AND DEPTNO  LIKE '%'||''||'%'
 AND "RANK"  LIKE '%'||''||'%';
---2. 조건에 맞는 사원들의 평가 정보
+--2. 조건에 맞는 사원들의 평가 정보 WHERE BETWEEN 급여, 부서, 직급
 SELECT  EMPNO, "RANK",DEPTNO, SALARY, 점수
 FROM 
 	(SELECT EMPNO, "RANK",DEPTNO,SALARY  FROM HISTORY H 
 		WHERE (EMPNO ,MOVEDAY ) IN
 				(SELECT EMPNO, MAX(MOVEDAY) FROM HISTORY h1 GROUP BY EMPNO)  
-		AND SALARY BETWEEN 200 AND 500
+		AND SALARY BETWEEN 100 AND 500
 		AND DEPTNO  LIKE '%'||''||'%'
 		AND "RANK"  LIKE '%'||''||'%') FILTER1,
 	(SELECT OBJ, ROUND(AVG(POINT),2) 점수 FROM appraisalAnswer GROUP BY OBJ) APPRE1
 WHERE APPRE1.OBJ(+)=FILTER1.EMPNO
 ORDER BY 점수
 ;
+--2.2 +조건에 따라 나온것중에 최소최대평균 점수 보여주기
+SELECT  AVG(점수) 평균 ,MAX(점수) 최대 ,MIN(점수) 최소
+FROM 
+	(SELECT EMPNO, "RANK",DEPTNO,SALARY  FROM HISTORY H 
+		WHERE (EMPNO ,MOVEDAY ) IN
+				(SELECT EMPNO, MAX(MOVEDAY) FROM HISTORY h1 GROUP BY EMPNO)  
+		AND SALARY BETWEEN 100 AND 500
+		AND DEPTNO  LIKE '%'||''||'%'
+		AND "RANK"  LIKE '%'||''||'%') FILTER1,
+	(SELECT OBJ, ROUND(AVG(POINT),2) 점수 FROM appraisalAnswer GROUP BY OBJ) APPRE1
+WHERE APPRE1.OBJ(+)=FILTER1.EMPNO
+ORDER BY 점수
 
---한사람의 평균점수
-SELECT OBJ, ROUND(AVG(POINT),2) FROM appraisalAnswer GROUP BY OBJ  ;
+----------------------------------------
+--퇴사자 분석 : 퇴사자의 마지막 history, 가장많은 부서, 가장 많은 직급, 가장 많은 급여
+SELECT deptno, COUNT(deptno) 
+FROM history WHERE (empno, moveday) in(
+SELECT h.empno, MIN(moveday) FROM history h
+	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno)
+GROUP BY DEPTNO ;
+
+SELECT "RANK" , COUNT(*) 
+FROM history WHERE (empno, moveday) in(
+SELECT h.empno, MIN(moveday) FROM history h
+	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno)
+GROUP BY "RANK" ;
+
+SELECT TRUNC(SALARY/100) "100단위 급여",COUNT(*)  
+FROM history WHERE (empno, moveday) in(
+SELECT h.empno, MIN(moveday) FROM history h
+	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno)
+GROUP BY TRUNC(SALARY/100) ;
+
+--퇴사자 min() history랑 퇴사일 비교해서 근무기간 알아내기
+SELECT r.EMPNO, ROUND((RETIREDAY -moveday)) 근무기간
+FROM RETIREMENT r , HISTORY h2 
+WHERE r.EMPNO =h2.EMPNO 
+AND (r.EMPNO ,moveday) IN 
+	(SELECT h.empno, MIN(moveday) FROM history h
+	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno);
+--개개인 말고 통계 근무기간
+SELECT round(avg(RETIREDAY -moveday)) 평균, round(min(RETIREDAY -moveday)) 최소 , round(max(RETIREDAY -moveday)) 최대
+FROM RETIREMENT r , HISTORY h2 
+WHERE r.EMPNO =h2.EMPNO 
+AND (r.EMPNO ,moveday) IN 
+	(SELECT h.empno, MIN(moveday) FROM history h
+	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno);
+
+
+--퇴사자들의 사원평가 정보
+
+
+SELECT * FROM EMPLOYEE e WHERE empno in (SELECT EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사');
+SELECT * FROM history h , EMPloyee e WHERE e.EMPNO =h.EMPNO AND  e.empno =2022601663;
+SELECT * FROM RETIREMENT r WHERE state LIKE '퇴사' ;

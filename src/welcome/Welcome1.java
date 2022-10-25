@@ -3,30 +3,32 @@ package welcome;
 import benefits.BenefitDao;
 import benefits.TrainingDao;
 import hrs.A_newEmp;
+import hrs.Appre;
 import hrs.Retiring;
+import operplan.Analizing;
 import operplan.HrplanDao;
 import payment.ExtraDao;
 import payment.Paystub;
 import schedule.SCDdao;
-import vos.BudgetVo;
+import schedule.WorkTableDAO;
 import vos.Employee;
-import vos.HrplanVo;
 
 public class Welcome1 {
 	public static Employee user;
 	
 	public static void main(String[] args) {
-//		Login lg=new Login();
+		Login lg=new Login();
 //		lg.login();
 //		WorkTableDAO workTableDAO = new WorkTableDAO();
 //		workTableDAO.timeon();
-//	System.out.println("관리자 권한: "+user.getAccess());
+//		System.out.println("관리자 권한: "+user.getAccess());
 //	 DayoffDao dad = new DayoffDao ();
 //	 dad.resetDayoff();
 	// dad.useDayoff();
 //	 dad.newapply();
-//		Appre ap=new Appre();
-		A_newEmp emp=new A_newEmp();
+		Appre ap=new Appre();
+//		A_newEmp emp=new A_newEmp();
+//		emp.insertHistory();
 //		emp.registerEmp();
 //	emp.searchEmp();
 //		ap.insertAns();
@@ -35,10 +37,10 @@ public class Welcome1 {
 //		ap.byQuebyEmp();
 //		ap.byDept();
 		Retiring rt=new Retiring();
-	//	rt.applyretire();
+//		rt.applyretire();
 //		rt.insertretire();
 //		rt.selectApply(new Retirement());
-	//	rt.changeState();
+//		rt.changeState();
 	//	Saldao sa=new Saldao();
 	//	sa.insertPayDept();
 	//	sa.updateBankac();
@@ -72,7 +74,11 @@ public class Welcome1 {
 //		hrp.hrplanByRank(new HrplanVo());
 //		hrp.hrplanByDept();
 //		hrp.budgetByAccount(new BudgetVo());
-		hrp.budgetByDept();
+//		hrp.budgetByDept();
+		Analizing az=new Analizing();
+//		az.showpointbyfilter();
+		az.retirementstudy1();
+		az.retirementstudy2();
 		
 //		workTableDAO.timeoff();
 	}

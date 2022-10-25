@@ -209,7 +209,7 @@ public class A_newEmp {
 		String deptno = sc.nextLine();
 		System.out.println("급여를 입력하세요");
 		String salary = sc.nextLine();
-			String ins = "insert into history values (" + empno + ",to_date('" + moveday + "','YYYY-MM-DD'),'" + rank+"'," + deptno + salary +")";
+			String ins = "insert into history values ('" + empno + "',to_date('" + moveday + "','YYYY-MM-DD'),'" + rank+"'," + deptno +" , "+ salary +")";
 			try {
 				con = DB.con();
 				con.setAutoCommit(false);
@@ -229,9 +229,11 @@ public class A_newEmp {
 					}
 				//부서번호확인 끝
 				stmt.executeUpdate(ins);
+				System.out.println("history정보 저장");
 				stmt.executeUpdate("UPDATE EMPLOYEE SET rank= '"+rank+"' , DEPTNO ="+deptno+" WHERE EMPNO  = "+empno);
-				System.out.println("인사이동정보가 저장되었습니다");
+				System.out.println("인사정보 수정");
 				con.commit();
+				System.out.println("커밋완료");
 			} catch (SQLException e) {
 				System.out.println("SQL오류발생: " + e.getMessage());
 				try {
