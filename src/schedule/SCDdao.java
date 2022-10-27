@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import vos.DB;
+import welcome.Welcome1;
 
 public class SCDdao {
 	private Connection con;
@@ -102,7 +103,7 @@ public class SCDdao {
 			con = DB.con();
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(sql);
-			System.out.println("출근일\t\t출근시간\t퇴근시간");
+			System.out.println("┏출근일\t\t출근시간\t퇴근시간┓");
 			while (rs.next()) {
 				System.out.print(rs.getString("출근일") + "\t");
 				System.out.print(rs.getString("출근시간") + "\t");
@@ -264,5 +265,28 @@ public class SCDdao {
 	 * to_date('2022-09','yyyy-mm'); --출근 스케줄 보기 : 전체/특정날짜입력 SELECT * FROM SCHEDULE
 	 * s WHERE trunc(intime,'dd') IN to_date('2022-10-22','yyyy-mm-dd');
 	 */
-
+	public void showMyScd() { // 개인별, 월별
+		System.out.println("조회 연월(yyyy-mm): ");
+		String yymm = sc.nextLine();
+		String sql = "SELECT to_char(intime,'yyyy-mm-dd') 출근일 ,to_char(intime,'HH24:mi') 출근시간 ,to_char(OUTTIME,'HH24:mi') 퇴근시간 FROM SCHEDULE s WHERE EMPNO ="
+				+Welcome1.user.getEmpno() + " and trunc(intime,'mm') IN to_date('" + yymm + "','yyyy-mm')";
+		try {
+			con = DB.con();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+			System.out.println("┏출근일\t\t출근시간\t퇴근시간┓");
+			while (rs.next()) {
+				System.out.print(rs.getString("출근일") + "\t");
+				System.out.print(rs.getString("출근시간") + "\t");
+				System.out.print(rs.getString("퇴근시간") + "\n");
+			}
+		} catch (SQLException e) {
+			System.out.println("SQL예외: " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("일반예외:" + e.getMessage());
+		} finally {
+			DB.close(rs, stmt, con);
+		}
+	}
+	
 }

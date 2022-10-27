@@ -55,17 +55,16 @@ public class Saldao {
 		String deptno=sc.nextLine();
 		String sql="INSERT INTO PAY (empno,payday,salary) (\r\n"
 				+ "SELECT h.EMPNO,to_date('"+todaystring+"','yyyy-mm-dd'),salary \r\n"
-				+ "FROM history h WHERE h.empno !=(SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사') \r\n"
+				+ "FROM history h WHERE h.empno NOT IN (SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사') \r\n"
 				+ "		AND (empno, MOVEDAY) \r\n"
 				+ "	IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno)AND deptno="+deptno+")";
 	try {
 		con = DB.con();
 		con.setAutoCommit(false);
 		stmt = con.createStatement();
-		System.out.println(todaystring+" : "+stmt.executeUpdate(sql)+"건의 급여내역을 저장했습니다");
+		System.out.print(todaystring+" : "+stmt.executeUpdate(sql)+"건의 급여를");
 		con.commit();
-		System.out.println("수정종료");
-
+		System.out.println("지급했습니다\n");
 	} catch (SQLException e) {
 		System.out.println(e.getMessage());
 		try {
@@ -134,8 +133,6 @@ public class Saldao {
 			DB.close(rs, stmt, con);
 		}
 	}
-	//수당 주세요 insert
-	//수당 주고나서 update
-	//정보 보기 : 지금까지 받은거, 올해 받은거, 급여만, 수당
+
 	
 }

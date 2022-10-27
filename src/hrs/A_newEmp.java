@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import vos.DB;
 import vos.Employee;
+import welcome.Welcome1;
 
 //등록 수정 삭제
 public class A_newEmp {
@@ -93,7 +94,8 @@ public class A_newEmp {
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				elist.add(new Employee(rs.getInt("empno"), rs.getString("name"), rs.getString("birth"),
-						rs.getString("address"), rs.getString("educational"), rs.getInt("deptno"), rs.getString("rank"),
+						rs.getString("address"), rs.getString("educational"), 
+						rs.getInt("deptno"), rs.getString("rank"),
 						rs.getString("pass")));
 			}
 		} catch (SQLException e) {
@@ -116,12 +118,14 @@ public class A_newEmp {
 			while (true) {
 				System.out.println("변경할 사원의 사원번호를 입력하세요");
 				empno = sc.nextLine();
-				System.out.println("변경하고자 하는 정보 번호를 입력하세요");
+				
 				rs = stmt.executeQuery("select * from employee where empno ='" + empno + "'");
 				if (!rs.next()) {
 					System.out.println("사원번호를 잘못 입력했습니다");
 					break;
 				}
+				
+				System.out.println("변경하고자 하는 정보 번호를 입력하세요");
 				System.out.println("1.주소\t2.학력\t3.이름");
 				String objCol = sc.nextLine();
 				switch (objCol) {
@@ -143,6 +147,7 @@ public class A_newEmp {
 
 				System.out.println("변경할 내용을 입력하세요");
 				newSet = sc.nextLine();
+				
 				String modiSql = "UPDATE EMPLOYEE SET " + colname + "= '" + newSet + "' WHERE empno = '" + empno + "'";
 				if (stmt.executeUpdate(modiSql) == 1) {
 					System.out.println("변경되었습니다.");
@@ -230,7 +235,8 @@ public class A_newEmp {
 				//부서번호확인 끝
 				stmt.executeUpdate(ins);
 				System.out.println("history정보 저장");
-				stmt.executeUpdate("UPDATE EMPLOYEE SET rank= '"+rank+"' , DEPTNO ="+deptno+" WHERE EMPNO  = "+empno);
+				stmt.executeUpdate("UPDATE EMPLOYEE SET rank= '"+rank+"' , "
+										+ "DEPTNO ="+deptno+" WHERE EMPNO  = "+empno);
 				System.out.println("인사정보 수정");
 				con.commit();
 				System.out.println("커밋완료");
@@ -295,4 +301,64 @@ public class A_newEmp {
 		return pass;
 	}
 
+	public void myInfo() {
+		try {
+			con = DB.con();
+			con.setAutoCommit(false);
+			stmt = con.createStatement();
+			String colname = null;
+			int empno = Welcome1.user.getEmpno();
+			String newSet = null;
+
+			while (true) {	
+				System.out.println("변경하고자 하는 정보 번호를 입력하세요");
+				System.out.println("1.주소\t2.학력\t3.이름\t4.비밀번호");
+				String objCol = sc.nextLine();
+				switch (objCol) {
+				case "1":
+					colname = "address";
+					break;
+				case "2":
+					colname = "educational";
+					break;
+				case "3":
+					colname = "NAME";
+					break;
+				case "4":
+					colname = "PASS";
+					break;
+				default:
+					System.out.println(objCol + "은 잘못된 번호입니다.");
+					break;
+				}
+				if (colname == null)
+					break;
+
+				System.out.println("변경할 내용을 입력하세요");
+				newSet = sc.nextLine();
+				
+				String modiSql = "UPDATE EMPLOYEE SET " + colname + "= '" + newSet + "' WHERE empno = '" + empno + "'";
+				if (stmt.executeUpdate(modiSql) == 1) {
+					System.out.println("변경되었습니다.");
+					break;
+				} else {
+					System.out.println("변경에 실패했습니다. 입력한 내용을 확인해주세요");
+					break;
+				}
+			} // while문 끝
+			con.commit();
+			System.out.println("수정종료");
+
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				System.out.println("롤백예외: " + e1.getMessage());
+			}
+		} finally {
+			DB.close(rs, stmt, con);
+		}
+	}
+	
 }

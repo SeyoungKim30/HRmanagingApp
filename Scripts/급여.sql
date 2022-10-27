@@ -17,7 +17,7 @@ ALTER TABLE pay ADD CONSTRAINT FK_Employee_TO_pay FOREIGN KEY ( EMPNO ) REFERENC
 SELECT * FROM HISTORY h , EMPLOYEE e WHERE h.EMPNO (+)=e.EMPNO ;
 SELECT * FROM HISTORY h ;
 
-SELECT * FROM pay ;
+SELECT * FROM pay WHERE EMPNO=2022101001 ;
 SELECT * FROM employee;
 SELECT * FROM PAY p , employee e  WHERE p.empno=e.EMPNO ORDER BY rank;
 INSERT INTO pay(EMPNO) (SELECT EMPNO FROM employee);
@@ -37,7 +37,7 @@ SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사';--퇴사자 번호만
 SELECT e.EMPNO,state FROM RETIREMENT r , employee e WHERE r.EMPNO (+)=e.EMPNO AND r.state(+)!='퇴사';		
 SELECT * FROM history h WHERE h.EMPNO IN (SELECT r.EMPNO FROM RETIREMENT r , employee e WHERE r.EMPNO (+)=e.EMPNO AND r.state(+)!='퇴사');
 --퇴사자빼고 최근월급
-SELECT h.EMPNO, salary FROM history h WHERE h.empno !=(SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사') 
+SELECT h.EMPNO, salary FROM history h WHERE h.empno NOT in (SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사') 
 		AND (empno, MOVEDAY) IN (SELECT empno, max(moveday) FROM HISTORY h GROUP BY empno)  ;
 
 --모두에게 최근 월급 주기
@@ -64,6 +64,7 @@ FROM history h WHERE h.empno !=(SELECT r.EMPNO FROM RETIREMENT r WHERE state LIK
 UPDATE pay SET bankAC = '신한85252-112-1123' WHERE EMPNO =2022101001;
 UPDATE pay SET bankAC = '국민81455-78879541' WHERE EMPNO =2022201023;
 
+
 /* 수당 */
 DROP TABLE EXTRAPAY CASCADE CONSTRAINTS;
 
@@ -85,5 +86,9 @@ INSERT INTO extrapay (empno,payno,amount,state) VALUES (2022201023,origin.nextva
 UPDATE extrapay SET STATE = '승인' WHERE EMPNO ='2022101001' AND state ='신청' AND amount = 140000;
 UPDATE extrapay SET STATE = '지급', payday=sysdate WHERE EMPNO ='2022101001' AND state ='승인' AND amount = 150000;
 
-SELECT empno,to_char(payday,'YYYY'),to_char(payday,'mm'),salary FROM pay WHERE empno =2022101001 ;
-SELECT empno,amount,to_char(payday,'YYYY'),to_char(payday,'mm') FROM extrapay WHERE empno =2022101001 AND payday IS NOT NULL;
+
+SELECT empno,to_char(payday,'YYYY'),to_char(payday,'mm'),salary 
+FROM pay WHERE empno =2022101001 ;
+
+SELECT empno,amount,to_char(payday,'YYYY'),to_char(payday,'mm') 
+FROM extrapay WHERE empno =2022101001 AND payday IS NOT NULL;

@@ -16,7 +16,7 @@ public class Analizing {
 	private ResultSet rs3;
 	Scanner sc = new Scanner(System.in);
 
-	public void showpointbyfilter() {
+	public void showpointbyfilter() {		//조건에 따른 인사평가 통계 조회
 		String summery="SELECT  AVG(점수) 평균 ,MAX(점수) 최대 ,MIN(점수) 최소\r\n"
 				+ "FROM \r\n"
 				+ "	(SELECT EMPNO, \"RANK\",DEPTNO,SALARY  FROM HISTORY H \r\n"
@@ -74,7 +74,7 @@ public class Analizing {
 			DB.close(rs, stmt, con);
 		}
 	}
-	public void retirementstudy1() {
+	public void retirementstudy1() {	//퇴사분석: 부서별 직급별 급여별
 		String bydept="SELECT dname , 인원 FROM DEPARTMENT d ,\r\n"
 				+ "(SELECT deptno, COUNT(deptno) 인원\r\n"
 				+ "FROM history WHERE (empno, moveday) in(\r\n"
@@ -120,7 +120,7 @@ public class Analizing {
 			DB.close(rs, stmt, con);
 		}
 	}
-	public void retirementstudy2() {
+	public void retirementstudy2() {	//퇴사분석: 근무기간, 직원평가 점수
 		String termstat="SELECT round(avg(RETIREDAY -moveday)) 평균, round(min(RETIREDAY -moveday)) 최소 , round(max(RETIREDAY -moveday)) 최대\r\n"
 				+ "FROM RETIREMENT r , HISTORY h2 \r\n"
 				+ "WHERE r.EMPNO =h2.EMPNO \r\n"

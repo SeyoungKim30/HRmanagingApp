@@ -12,8 +12,8 @@ public class Retirement {
 			"SELECT e.empno,name,deptno,RANK, retireday,reason, "
 		+ "state FROM retirement r, EMPLOYEE e  WHERE r.EMPNO =e.EMPNO ";
 	int filtercount=0;
-	int noEmpno=0;
 	int noName=0;
+	int noEmpno=0;
 	int noDeptno=0;
 	int noRank=0;
 	int noRetireyear=0;

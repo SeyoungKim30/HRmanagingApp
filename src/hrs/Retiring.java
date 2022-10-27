@@ -91,8 +91,8 @@ public class Retiring {
 	public void selectApply(Retirement vo) { // 관리자가 퇴사신청서 내역 조건별로 볼 수 있게 동적 sql
 		List<Retirement> rlist = new ArrayList<Retirement>();
 		System.out.println("검색조건 번호를 선택하세요");
-		while (true) {     //while문으로 필터를 선택해서 입력할 수 있게
-			System.out.println("1.사원명\t2.사원번호\t3.퇴직연도\t4.상태\t5.부서번호\t6.직급");
+		while (true) { // while문으로 필터를 선택해서 입력할 수 있게
+			System.out.println("1.사원명  2.사원번호  3.퇴직연도  4.상태  5.부서번호  6.직급");
 			System.out.println("다른 키를 누르면 필터 선택이 끝납니다");
 			String filter = sc.nextLine();
 			switch (filter) {
@@ -129,34 +129,30 @@ public class Retiring {
 			default:
 				filter = "0";
 			}
-			if (filter.equals("0")) break;
+			if (filter.equals("0"))
+				break;
 		}
-		String sql=vo.getSearchline();
-		System.out.println(sql);
-		System.out.println(vo.getNoName());
-		System.out.println(vo.getNoEmpno());
-		System.out.println(vo.getNoDeptno());
-		System.out.println(vo.getNoRank());
-		System.out.println(vo.getNoRetireyear());
-		System.out.println(vo.getNoState());
+		String sql = vo.getSearchline();
 		try {
 			con = DB.con();
-			pstmt=con.prepareStatement(sql);
-			if(vo.getNoName()!=0)
-				pstmt.setString(vo.getNoName(),vo.getName());
-			if(vo.getNoEmpno()!=0)
-				pstmt.setString(vo.getNoEmpno(),vo.getEmpno());
-			if(vo.getNoDeptno()!=0)
-				pstmt.setString(vo.getNoDeptno(),vo.getDeptno());
-			if(vo.getNoRank()!=0)
-				pstmt.setString(vo.getNoRank(),vo.getRank());
-			if(vo.getNoRetireyear()!=0)
-				pstmt.setString(vo.getNoRetireyear(),vo.getRetireyear());
-			if(vo.getNoState()!=0)
-				pstmt.setString(vo.getNoState(),vo.getState());
-			rs=pstmt.executeQuery();
-			while(rs.next()) {
-			rlist.add(new Retirement(rs.getString("empno"),rs.getString("name"),rs.getString("deptno"),rs.getString("rank"),rs.getString("retireday"),rs.getString("reason"),rs.getString("state")));
+			pstmt = con.prepareStatement(sql);
+			if (vo.getNoName() != 0)
+				pstmt.setString(vo.getNoName(), vo.getName());
+			if (vo.getNoEmpno() != 0)
+				pstmt.setString(vo.getNoEmpno(), vo.getEmpno());
+			if (vo.getNoDeptno() != 0)
+				pstmt.setString(vo.getNoDeptno(), vo.getDeptno());
+			if (vo.getNoRank() != 0)
+				pstmt.setString(vo.getNoRank(), vo.getRank());
+			if (vo.getNoRetireyear() != 0)
+				pstmt.setString(vo.getNoRetireyear(), vo.getRetireyear());
+			if (vo.getNoState() != 0)
+				pstmt.setString(vo.getNoState(), vo.getState());
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				rlist.add(new Retirement(rs.getString("empno"), rs.getString("name"), rs.getString("deptno"),
+						rs.getString("rank"), rs.getString("retireday"), rs.getString("reason"),
+						rs.getString("state")));
 			}
 
 		} catch (SQLException e) {
@@ -166,42 +162,70 @@ public class Retiring {
 		} finally {
 			DB.close(rs, stmt, con);
 		}
-		for(Retirement r:rlist) {
+		for (Retirement r : rlist) {
 			r.printAll();
 		}
 	}
 
-	public void changeState() {		//퇴사 승인,취소 등 관리자메뉴
+	public void changeState() { // 퇴사 승인,취소 등 관리자메뉴
 		System.out.println("퇴사신청 상태를 변경할 사원의 사원번호를 입력하세요");
-		String empno=sc.nextLine();
+		String empno = sc.nextLine();
 		System.out.println("변경할 상태를 입력하세요('신청','승인','퇴사','취소')");
-		String state=sc.nextLine();
-		String checksql="select * from RETIREMENT where empno = "+empno ;
-		String sql="UPDATE RETIREMENT SET STATE = '"+state+"' WHERE EMPNO ='"+empno+"'";
+		String state = sc.nextLine();
+		String checksql = "select * from RETIREMENT where empno = " + empno;
+		String sql = "UPDATE RETIREMENT SET STATE = '" + state + "' WHERE EMPNO ='" + empno + "'";
 		try {
-			con=DB.con();
+			con = DB.con();
 			con.setAutoCommit(false);
-			stmt=con.createStatement();
-			rs=stmt.executeQuery(checksql);
-			if(rs.next()) {
-			System.out.println(stmt.executeUpdate(sql)+"건의 상태가 변경되었습니다");
-			}else {
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(checksql);
+			if (rs.next()) {
+				System.out.println(stmt.executeUpdate(sql) + "건의 상태가 변경되었습니다");
+			} else {
 				System.out.println("해당 사원의 퇴사신청 정보가 없습니다");
-			con.commit();
+				con.commit();
 			}
-     } catch (SQLException e) {
-		System.out.println("SQL예외: "+e.getMessage());
-		try {
-			con.rollback();
-		} catch (SQLException e1) {
-			System.out.println("롤백예외:" +e1.getMessage());
-		}
-		}catch(Exception e) {
-			System.out.println("일반예외:"+e.getMessage());
-		}
-		finally {
+		} catch (SQLException e) {
+			System.out.println("SQL예외: " + e.getMessage());
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				System.out.println("롤백예외:" + e1.getMessage());
+			}
+		} catch (Exception e) {
+			System.out.println("일반예외:" + e.getMessage());
+		} finally {
 			DB.close(rs, stmt, con);
 		}
 	}
-}
 
+	public void changeStateAuto() {
+		System.out.println("퇴사신청일이 지난 승인된 퇴사신청을 자동으로 처리합니다 (Y/N)");
+		String check = sc.nextLine();
+		if (check.equals("Y")) {
+			String sql = "UPDATE RETIREMENT SET STATE = '퇴사' WHERE STATE = '승인' AND retireday < sysdate";
+			try {
+				con = DB.con();
+				con.setAutoCommit(false);
+				stmt = con.createStatement();
+				System.out.print(stmt.executeUpdate(sql) + "건의 승인된 퇴사신청의 상태를");
+				con.commit();
+				System.out.print(" 퇴사로 변경했습니다\n");
+			} catch (SQLException e) {
+				System.out.println("SQL예외: " + e.getMessage());
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					System.out.println("롤백예외:" + e1.getMessage());
+				}
+			} catch (Exception e) {
+				System.out.println("일반예외:" + e.getMessage());
+			} finally {
+				DB.close(rs, stmt, con);
+			}
+		} else {
+			System.out.println("자동퇴사를 취소합니다");
+		}
+
+	}
+}

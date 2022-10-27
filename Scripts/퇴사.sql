@@ -24,13 +24,17 @@ SELECT * FROM RETIREMENT r WHERE state = '신청';
 --퇴사 신청자 보기 (모두)(연도별)
 SELECT * FROM retirement WHERE to_char(retireday,'yyyy') LIKE '%'||'2022'||'%';
 --퇴사 신청자 보기(상태,이름,연도)
-SELECT e.empno,name,deptno,RANK, retireday,reason, state FROM retirement r, EMPLOYEE e  WHERE r.EMPNO =e.EMPNO  
-AND to_char(retireday,'yyyy') like '%'||''||'%' 
-AND name like '%'||''||'%' 
-AND state LIKE '%'||''||'%';
+SELECT e.empno,name,deptno,RANK, retireday,reason, state 
+FROM retirement r, EMPLOYEE e  WHERE r.EMPNO =e.EMPNO  
+	AND to_char(retireday,'yyyy') like '%'||''||'%' 
+	AND name like '%'||''||'%' 
+	AND state LIKE '%'||''||'%';
 --내 퇴사신청 상태 보기
 SELECT * FROM RETIREMENT r WHERE empno = '내번호';
 --퇴사 승인하기(신청-승인-퇴사)
+
 UPDATE RETIREMENT SET STATE = '승인' WHERE EMPNO ='2022501028';
+
 --날짜 읽어와서 '승인'중에 그날 맞는 애들은 저절로 퇴사로 바꾸게
-UPDATE RETIREMENT SET STATE = '퇴사' WHERE EMPNO ='2022501028';
+
+UPDATE RETIREMENT SET STATE = '퇴사' WHERE STATE = '승인' AND retireday < sysdate;

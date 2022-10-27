@@ -29,7 +29,13 @@ UPDATE EMPLOYEE SET educational= '방송대 재학중' WHERE name = '최지연';
 UPDATE EMPLOYEE SET rank= '회장' , DEPTNO =30 WHERE EMPNO  = 200000 ;
 DELETE FROM employee WHERE empno = '최지연' AND empno = 21020;
 
-insert into history values (2022701025,to_date('2022-10-14','YYYY-MM-DD'),'전무',10);
+UPDATE employee SET address ='강원도 강릉시' WHERE empno = 2022101001;
+
+UPDATE EMPLOYEE SET rank= '과장' , DEPTNO = 40 WHERE EMPNO  = 2022201023;
+
+insert into history values 
+(2022201023,to_date('2022-10-25','YYYY-MM-DD'),'과장',40,300);
+
 DELETE FROM history WHERE empno = 2022201023 AND moveday = TO_DATE('2205-11-22','yyyy-mm-dd') ;
 
 UPDATE department SET dname = '경영지원' WHERE deptno = 10;
@@ -43,4 +49,7 @@ where subde.부서번호 (+)= de.deptno
 AND (de.deptno like '%'||''||'%'
 OR de.dname LIKE '%'||''||'%');
 
-SELECT empno, pass FROM EMPLOYEE WHERE empno = '2022101001' AND pass = '12345'
+SELECT empno, pass FROM EMPLOYEE WHERE empno = '2022101001' AND pass = '12345';
+
+SELECT * FROM employee WHERE name LIKE '%'||''||'%';
+

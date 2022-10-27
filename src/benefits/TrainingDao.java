@@ -132,7 +132,7 @@ public class TrainingDao {
 		}
 	
 	}
-	//복지별 신청한 사람들
+	//교육별 신청한 사람들
 	public void whoattend() {
 		System.out.println("신청자를 확인할 교육 번호를 입력하세요");
 		String listnumber=sc.nextLine();

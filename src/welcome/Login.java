@@ -23,7 +23,7 @@ public class Login {
 	String pass;
 	Scanner sc = new Scanner(System.in);
 
-	public void login() {
+	public Login() {
 		try {
 			while (true) {
 				System.out.println("사원번호:");

@@ -3,17 +3,10 @@ DROP TABLE benefit
 	CASCADE CONSTRAINTS;
 
 /* 복지 */
-SELECT * FROM benefit;
-/* 복지 */
-DROP TABLE benefit 
-	CASCADE CONSTRAINTS;
-
-/* 복지 */
 CREATE TABLE benefit (
 	listnumber NUMBER NOT NULL, /* 목록번호 */
 	title VARCHAR2(50) NOT NULL, /* 복지명 */
-	condi1 VARCHAR2(50), /* 직급조건 */
-	condi2 VARCHAR2(50), /* 부서 */
+	condi VARCHAR2(300), 
 	reportDay DATE, /* 마감일 */
 	cost NUMBER /* 비용 */
 );
@@ -51,17 +44,34 @@ CREATE TABLE attendeeList (
 );
 ALTER TABLE attendeeList ADD CONSTRAINT FK_Employee_TO_attendeeList FOREIGN KEY ( EMPNO ) REFERENCES Employee ( EMPNO );
 
-		
 SELECT * FROM TRAINING t ;
-SELECT * FROM benefit ;
-SELECT* FROM ATTENDEELIST ;
+SELECT * FROM benefit ;		--170620221251
+SELECT* FROM ATTENDEELIST;
+
 SELECT t.LISTNUMBER ,t.title,t.title FROM ATTENDEELIST a , TRAINING t ,BENEFIT b WHERE a.LISTNUMBER =t.LISTNUMBER ;
 SELECT b.LISTNUMBER ,b.title , a.EMPNO  FROM ATTENDEELIST a ,BENEFIT b WHERE a.LISTNUMBER =b.LISTNUMBER ;
 --교육 입력
 INSERT INTO training VALUES (origin.nextval||220824+10,'2022하반기 소방안전교육',to_date('2022-08-24 13:00','yyyy-mm-dd HH24:MI'),'안전',10,0,'미정');
 --복지 입력
-INSERT INTO benefit VALUES (origin.nextval||20211231+20,
-'교통비지원',''||NULL||'',null,to_date('20221231','yyyymmdd'),100);
+INSERT INTO benefit VALUES (origin.nextval||20211231+20,'교통비지원',''||NULL||'',to_date('20221231','yyyymmdd'),100);
+
+INSERT INTO benefit VALUES (origin.nextval||20211231+20,'자녀 대학장학금',
+q'[ INSERT INTO ATTENDEELIST 
+	(SELECT ? ,empno FROM employee WHERE empno=? and (deptno = 20 or deptno = 10 ) )]',
+	to_date('20231231','yyyymmdd'),500);
+
+--복지에 조건 설정하기
+--조건: 나이가 몇살 이상
+SELECT * FROM employee WHERE (sysdate - birth)/365 >= 40 AND (sysdate - birth)/365 <=60 ;
+--조건 : 직급
+SELECT * FROM employee WHERE (RANK LIKE '%'||'부장'||'%') ;
+--조건 : 부서가 어디
+SELECT * FROM employee WHERE deptno = 10 OR deptno =20; 
+--조건 설정해서 신청할때
+SELECT listnumber , CONDI FROM benefit WHERE LISTNUMBER =170620221251;
+INSERT INTO ATTENDEELIST 
+(SELECT 170220211251 ,empno FROM employee WHERE empno=2022101001 AND (RANK LIKE '%'||'부장'||'%' OR RANK LIKE '%'||'이사'||'%') );
+
 --복지 신청
 INSERT INTO ATTENDEELIST 
 	(SELECT 1648220844,2022101001 FROM employee 
@@ -75,7 +85,6 @@ WHERE a.LISTNUMBER =b.listnumber AND e.EMPNO =a.EMPNO  AND a.listnumber= 1653202
 UPDATE TRAINING SET CRTATTENDEE = CRTATTENDEE + 1 WHERE LISTNUMBER = 1646220824 AND CRTATTENDEE < MAXATTENDEE ;
 INSERT INTO ATTENDEELIST VALUES (1646220824, 2022201027) ;
 
-DELETE benefit WHERE listnumber =164920211251;
 
 
 --교육 조회

@@ -1,6 +1,7 @@
 package benefits;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,29 +17,76 @@ public class BenefitDao {
 
 	private Connection con;
 	private Statement stmt;
+	private PreparedStatement pstmt;
 	private ResultSet rs;
 	Scanner sc = new Scanner(System.in);
 	
 	//입력
 	public void insertBene() {
+		String filter1="INSERT INTO ATTENDEELIST "
+				+ "(SELECT ? ,empno FROM employee WHERE empno= ? ";
+		
+		String condi="";
 		System.out.println("복지명을 입력하세요");
 		String title=sc.nextLine();
-		System.out.println("직급 조건을 입력하세요(조건이 없으면 X 입력)");
-		String condi1=sc.nextLine();
-		System.out.println("부서 조건을 입력하세요(조건이 없으면 X 입력)");
-		String condi2=sc.nextLine();
 		System.out.println("마감일을 입력하세요(yyyymmdd)");
 		String reportDay=sc.nextLine();
 		System.out.println("시행비용은 얼마인가요");
 		String cost=sc.nextLine();
-		if(condi1.equals("X")) condi1="'||NULL||'";
-		if(condi2.equals("X")) condi2="'||NULL||'";
-
+		
+		String setcondition ="Y";
+		while(true) {
+		System.out.println("조건을 입력할까요(Y/N)");
+		setcondition =sc.nextLine();	
+		if(setcondition.equals("N")) break;
+			
+		System.out.println("번호를 입력하세요");
+		System.out.println("1.부서조건  2.직급 조건  3. 나이 조건");
+		setcondition=sc.nextLine();
+		switch(setcondition) {
+			case "1" : System.out.println("부서번호를 입력하세요");
+				String deptset=sc.nextLine();
+				condi+= "and (deptno = "+deptset;
+				String additionaldeptno="0";
+				while(!additionaldeptno.equals("N")){
+				System.out.println("부서를 추가로 입력하려면 부서번호, 완료하려면 N을 입력하세요");
+					additionaldeptno=sc.nextLine();
+					if(additionaldeptno.equals("N")) break;
+					condi+=" or deptno = "+additionaldeptno;
+				}
+				condi+= " )";
+				continue;
+				
+			case "2" :System.out.println("직급을 입력하세요");
+			String ranking=sc.nextLine();
+			condi+= " and (RANK LIKE '%'||'"+ranking+"'||'%' ";
+			String additionalranking="0";
+			while(!additionalranking.equals("N")){
+			System.out.println("추가로 입력하려면 직급명, 완료하려면 N을 입력하세요");
+			additionalranking=sc.nextLine();
+				if(additionalranking.equals("N")) break;
+				condi+=" or RANK LIKE '%'||'"+additionalranking+"'||'%'";
+			}
+			condi+= " ) ";
+			break;
+				
+			case "3" :
+				System.out.println("나이를 입력하세요(최소, 최대)");
+				String age1=sc.nextLine();
+				String age2=sc.nextLine();
+				condi+=" and (sysdate - birth)/365 >= "+age1+" AND (sysdate - birth)/365 <= "+age2;
+				break;
+			default :
+				System.out.println("조건이 입력되지 않았습니다");
+			}
+		}
+		
+		System.out.println("입력할 조건: "+filter1+condi+")");
 		try {
 			con=DB.con();
 			con.setAutoCommit(false);
 			String sql="INSERT INTO benefit VALUES (origin.nextval||"+reportDay+"+20,' "
-					+ title+"', '"+condi1+"' ,'"+condi2+"' , to_date('"+reportDay+"','yyyymmdd'), "+cost+")";
+					+ title+"', q'[ "+filter1+condi+")]' , to_date('"+reportDay+"','yyyymmdd'), "+cost+")";
 			stmt=con.createStatement();
 			stmt.executeUpdate(sql);
 			con.commit();
@@ -62,11 +110,11 @@ public class BenefitDao {
 		List<Benefit> blist=new ArrayList<Benefit>();
 		try {
 			con=DB.con();
-			String findsql="SELECT LISTNUMBER, title,condi1,nvl(condi2,'조건없음'),reportday,cost FROM benefit ";
+			String findsql="SELECT LISTNUMBER, title,condi,reportday,cost FROM benefit ";
 			stmt=con.createStatement();
 			rs=stmt.executeQuery(findsql);
 			while(rs.next()) {
-			Benefit bb= new Benefit(rs.getString("LISTNUMBER"),rs.getString("title"),rs.getString(3),rs.getString(4),rs.getString("reportday"),rs.getString("cost"));
+			Benefit bb= new Benefit(rs.getString("LISTNUMBER"),rs.getString("title"),rs.getString(3),rs.getString("reportday"),rs.getString("cost"));
 			blist.add(bb);
 			}
 			
@@ -85,23 +133,24 @@ public class BenefitDao {
 	//신청
 	public void getBene() {
 		Benefit bb;
-		String getsql="";
+		String insertsql="";
 		try {
 			con=DB.con();
 			con.setAutoCommit(false);
 			System.out.println("신청하려는 복지 번호를 입력하세요");
 			String listnumber=sc.nextLine();
-			String findsql="SELECT title,nvl(condi1,'X'),nvl(condi2,'X'),reportday,cost FROM benefit where listnumber = "+listnumber;
+			String findsql="SELECT listnumber , CONDI FROM benefit WHERE LISTNUMBER = "+listnumber;
 			stmt=con.createStatement();
 			rs=stmt.executeQuery(findsql);
 			while(rs.next()) {
-			bb= new Benefit(rs.getString("title"),rs.getString(2),rs.getString(3),rs.getString("reportday"),rs.getString("cost"));
-			getsql="INSERT INTO ATTENDEELIST \r\n"
-					+ "	(SELECT "+listnumber+" , "+Welcome1.user.getEmpno()+" FROM employee \r\n"
-					+ "	WHERE EMPNO ="+Welcome1.user.getEmpno()+" AND \"RANK\" LIKE '%'||'"+bb.getCondi1()+"'||'%' AND deptno LIKE '%'||'"+bb.getCondi2()+"'||'%')";
+				bb=new Benefit(rs.getString(1),rs.getString(2));
+				insertsql=bb.getCondi();
 			}
-			
-			System.out.print(stmt.executeUpdate(getsql)+"신청");
+			pstmt=con.prepareStatement(insertsql);
+			pstmt.setString(1,listnumber);
+			pstmt.setInt(2,Welcome1.user.getEmpno());
+			System.out.println(insertsql);
+			System.out.print(pstmt.executeUpdate()+"건 신청");
 			con.commit();
 			System.out.print(" 완료\n");
      } catch (SQLException e) {
@@ -120,7 +169,7 @@ public class BenefitDao {
 		}
 	}
 	
-	//사람별 신청한 복지 리스트
+	//내가 신청한 복지 리스트
 	public void myBene() {
 		try {
 			con=DB.con();
@@ -141,6 +190,7 @@ public class BenefitDao {
 		}
 	
 	}
+	
 	//복지별 신청한 사람들
 	public void whoattend() {
 		System.out.println("신청자를 확인할 복지 등록번호를 입력하세요");

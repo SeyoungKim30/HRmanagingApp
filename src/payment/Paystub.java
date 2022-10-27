@@ -16,10 +16,11 @@ public class Paystub {
 	private Connection con;
 	private Statement stmt;
 	private ResultSet rs;
-	List<Pay> plist = new ArrayList<Pay>();
+	
 	Scanner sc = new Scanner(System.in);
 
-	public void myMonthtotal() {
+	public void myMonthtotal() {		//내소득 조회
+		List<Pay> plist = new ArrayList<Pay>();
 		try {
 			con=DB.con();
 			stmt=con.createStatement();
@@ -37,9 +38,9 @@ public class Paystub {
 	rs=stmt.executeQuery(sqlext);
 	while(rs.next()) {
 		int empno = Welcome1.user.getEmpno();
-		String month = rs.getString("2");
-		String year = rs.getString("1");
-		int amount  = rs.getInt("3");
+		String month = rs.getString(2);
+		String year = rs.getString(1);
+		int amount  = rs.getInt(3);
 		String cate = "수당";
 		plist.add(new Pay(empno,month,year,amount,cate));
 	}			
@@ -59,8 +60,10 @@ public class Paystub {
 		totalpay+=pp.getAmount();
 		}
 		System.out.println("━━━━━━━━총 소득: "+totalpay+" ━━━━━━━━");
+		plist=null;
 	}
-	public void empMonthtotal() {	
+	public void empMonthtotal() {		//남의 소득 조회
+		List<Pay> plist = new ArrayList<Pay>();
 		System.out.println("조회할 사원 번호 입력:");
 		int empno = sc.nextInt();
 		try {
@@ -99,7 +102,8 @@ public class Paystub {
 			System.out.println(pp.getYear()+"년 "+pp.getMonth()+"월 " + pp.getCate() +" : " +pp.getAmount());
 		totalpay+=pp.getAmount();
 		}
-		System.out.print("━━━━━━━━총 소득: "+totalpay+" ━━━━━━━━");
+		System.out.println("━━━━━━━━총 소득: "+totalpay+" ━━━━━━━━");
+		plist=null;
 	}
 
 	

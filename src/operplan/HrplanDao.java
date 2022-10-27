@@ -106,10 +106,10 @@ public class HrplanDao {
 	}
 
 	public void insertBudget() {
-		System.out.println("초기예산이면 1, 예산추가면 2를 눌러주세요");
+		System.out.println("금년도 초기예산이면 1, 예산추가면 2를 눌러주세요");
 		String year = sc.nextLine();
 		if (year.equals("1")) {
-			year = "'2022-01-01'";
+			year = "trunc(sysdate,'YYYY')";
 		} else {
 			year = "sysdate";
 		}
@@ -119,7 +119,7 @@ public class HrplanDao {
 		String type = sc.nextLine();
 		System.out.println("금액을 입력하세요");
 		String budget = sc.nextLine();
-		String sql = "INSERT INTO BUDGETPLAN VALUES (to_date(" + year + ",'yyyy-MM-DD')," + deptno + ",'" + type + "',"
+		String sql = "INSERT INTO BUDGETPLAN VALUES ("+year+"," + deptno + ",'" + type + "',"
 				+ budget + ")";
 		try {
 			con = DB.con();

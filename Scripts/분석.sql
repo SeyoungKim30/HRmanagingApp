@@ -86,9 +86,9 @@ WHERE 실제.부서번호별=계획.DEPTNO AND DP.DEPTNO=계획.DEPTNO;
 SELECT * FROM DEPARTMENT d ;
 SELECT * FROM BUDGETPLAN ;
 --예산계획 입력(1월1일)
-INSERT INTO BUDGETPLAN VALUES (to_date('2022-01-01','yyyy-MM-DD'),30,'복리후생비',5000);
+INSERT INTO BUDGETPLAN VALUES (trunc(sysdate,'YYYY'),30,'복리후생비',5000);
 --초과해서 추가예산 편성할때 
-INSERT INTO BUDGETPLAN VALUES(SYSDATE,30, '운반비', 5000);
+INSERT INTO BUDGETPLAN VALUES(SYSDATE, 30, '운반비', 5000);
 --예산계획 분석(조회)
 --1-1.초기예산(특정부서, 항목별)
 SELECT "TYPE", BUDGET FROM BUDGETPLAN WHERE YEAR=to_date('2021-01-01','yyyy-MM-DD') AND DEPTNO=30;
@@ -151,11 +151,13 @@ ORDER BY 점수
 
 ----------------------------------------
 --퇴사자 분석 : 퇴사자의 마지막 history, 가장많은 부서, 가장 많은 직급, 가장 많은 급여
-SELECT deptno, COUNT(deptno) 
+SELECT dname , 인원 FROM DEPARTMENT d ,
+(SELECT deptno, COUNT(deptno) 인원
 FROM history WHERE (empno, moveday) in(
 SELECT h.empno, MIN(moveday) FROM history h
 	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno)
-GROUP BY DEPTNO ;
+GROUP BY DEPTNO ) d1 
+WHERE d.DEPTNO =d1.deptno;
 
 SELECT "RANK" , COUNT(*) 
 FROM history WHERE (empno, moveday) in(
@@ -163,19 +165,21 @@ SELECT h.empno, MIN(moveday) FROM history h
 	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno)
 GROUP BY "RANK" ;
 
-SELECT TRUNC(SALARY/100) "100단위 급여",COUNT(*)  
+SELECT round(SALARY,-2) "급여",COUNT(*)  
 FROM history WHERE (empno, moveday) in(
 SELECT h.empno, MIN(moveday) FROM history h
 	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno)
-GROUP BY TRUNC(SALARY/100) ;
+GROUP BY round(SALARY,-2) ;
+
 
 --퇴사자 min() history랑 퇴사일 비교해서 근무기간 알아내기
+/*
 SELECT r.EMPNO, ROUND((RETIREDAY -moveday)) 근무기간
 FROM RETIREMENT r , HISTORY h2 
 WHERE r.EMPNO =h2.EMPNO 
 AND (r.EMPNO ,moveday) IN 
 	(SELECT h.empno, MIN(moveday) FROM history h
-	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno);
+	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno);*/
 --개개인 말고 통계 근무기간
 SELECT round(avg(RETIREDAY -moveday)) 평균, round(min(RETIREDAY -moveday)) 최소 , round(max(RETIREDAY -moveday)) 최대
 FROM RETIREMENT r , HISTORY h2 
@@ -184,10 +188,19 @@ AND (r.EMPNO ,moveday) IN
 	(SELECT h.empno, MIN(moveday) FROM history h
 	WHERE h.empno in (SELECT EMPNO FROM RETIREMENT WHERE state LIKE '퇴사') GROUP BY h.empno);
 
-
 --퇴사자들의 사원평가 정보
-
+SELECT AVG(point) FROM APPRAISALANSWER a WHERE (obj, substr(QUENO,1,4) ) 
+in (SELECT EMPNO, to_char(retireday,'yyyy') FROM RETIREMENT WHERE state LIKE '퇴사');
 
 SELECT * FROM EMPLOYEE e WHERE empno in (SELECT EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사');
 SELECT * FROM history h , EMPloyee e WHERE e.EMPNO =h.EMPNO AND  e.empno =2022601663;
 SELECT * FROM RETIREMENT r WHERE state LIKE '퇴사' ;
+
+SELECT * FROM APPRAISALANSWER a2 ;
+SELECT * FROM APPRAISALANSWER a ;
+SELECT * FROM APPRAISALQUE a  ;
+INSERT INTO APPRAISALANSWER VALUES (20228,2,2022101001,2022501028);
+INSERT INTO APPRAISALANSWER VALUES (20224,5,2022101001,2022501028);
+INSERT INTO APPRAISALANSWER VALUES (20225,5,2022101001,2022501028);
+INSERT INTO APPRAISALANSWER VALUES (20226,2,2022101001,2022501028);
+INSERT INTO APPRAISALANSWER VALUES (20227,3,2022101001,2022501028);

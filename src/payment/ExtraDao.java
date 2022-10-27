@@ -53,7 +53,7 @@ public class ExtraDao {
 		String payno = sc.nextLine();
 		System.out.println("신청할 금액을 입력하세요");
 		String amount = sc.nextLine();
-		System.out.println("현재 상태를 입력하세요");
+		System.out.println("현재 상태를 입력하세요(지급/승인/신청)");
 		String state = sc.nextLine();
 		String sql = "INSERT INTO extrapay (empno,payno,amount,state) VALUES ("+empno+",origin.nextval||"+payno+","+amount+",'"+state+"')";
 		try {
@@ -76,14 +76,14 @@ public class ExtraDao {
 		}
 	}
 
-	public void stateConfirm() {
+	public void stateConfirm() {		//수당 승인
 		System.out.println("수당 대상자의 사원번호를 입력하세요");
 		String empno = sc.nextLine();
 		System.out.println("변경할 수당번호를 입력하세요");
 		String payno = sc.nextLine();
-		System.out.println("금액을 입력하세요");
+		System.out.println("승인된 금액을 입력하세요");
 		String amount = sc.nextLine();
-		String sql = "UPDATE extrapay SET STATE = '승인' WHERE EMPNO ='"+empno+"' AND state ='승인' And payno = "+payno+" AND amount = "+amount;
+		String sql = "UPDATE extrapay SET STATE = '승인', amount = "+amount+" WHERE EMPNO ='"+empno+"' AND payno = "+payno ;
 		try {
 			con = DB.con();
 			con.setAutoCommit(false);
@@ -104,15 +104,14 @@ public class ExtraDao {
 		}
 	
 	}
-	public void statePaid() {
+	public void statePaid() {	//지급
 		System.out.println("수당 대상자의 사원번호를 입력하세요");
 		String empno = sc.nextLine();
-		System.out.println("변경할 수당의 번호를 입력하세요");
-		System.out.println("1.야간수당 2.휴일수당 3.시간외근무수당 4.연차수당");
+		System.out.println("지급할 수당의 번호를 입력하세요");
 		String payno = sc.nextLine();
 		System.out.println("금액을 입력하세요");
 		String amount = sc.nextLine();
-		String sql = "UPDATE extrapay SET STATE = '승인', payday=sysdate WHERE EMPNO ='"+empno+"' AND state ='승인' And payno = "+payno+" AND amount = "+amount;
+		String sql = "UPDATE extrapay SET STATE = '지급', payday=sysdate WHERE EMPNO ='"+empno+"' AND state ='승인' And payno = "+payno+" AND amount = "+amount;
 		try {
 			con = DB.con();
 			con.setAutoCommit(false);
