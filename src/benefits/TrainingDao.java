@@ -16,6 +16,7 @@ import welcome.Welcome1;
 public class TrainingDao {
 	private Connection con;
 	private Statement stmt;
+	private Statement stmt2;
 	private ResultSet rs;
 	Scanner sc = new Scanner(System.in);
 	
@@ -83,17 +84,32 @@ public class TrainingDao {
 	public void getTraining() {
 		System.out.println("신청하려는 교육 번호를 입력하세요");
 		String listnumber=sc.nextLine();
-		String trainingsql="UPDATE TRAINING SET CRTATTENDEE = CRTATTENDEE + 1 WHERE LISTNUMBER = "+listnumber+" AND CRTATTENDEE < MAXATTENDEE ";
-		String listsql="INSERT INTO ATTENDEELIST VALUES ("+listnumber+", "+Welcome1.user.getEmpno()+")";
+		String checkeffectiveness="SELECT LISTNUMBER ,title,MAXATTENDEE ,CRTATTENDEE FROM training WHERE LISTNUMBER = "+listnumber;//존재랑 인원 확인
+		String trainingsql="UPDATE TRAINING SET CRTATTENDEE = CRTATTENDEE + 1 WHERE LISTNUMBER = "+listnumber+" AND CRTATTENDEE < MAXATTENDEE ";//인원확인
+		String listsql="INSERT INTO ATTENDEELIST (SELECT "+listnumber+", "+Welcome1.user.getEmpno()
+		+ " FROM dual WHERE NOT exists (SELECT 1 FROM ATTENDEELIST WHERE LISTNUMBER= "+listnumber+" AND EMPNO= "+Welcome1.user.getEmpno()+"))";	//중복방지
 		try {
 			con=DB.con();
 			con.setAutoCommit(false);
 			stmt=con.createStatement();
-			if(stmt.executeUpdate(trainingsql)+stmt.executeUpdate(listsql)==2) {
-				System.out.print("교육 신청");
-			}
-			con.commit();
-			System.out.print(" 완료\n");
+			stmt2=con.createStatement();
+			rs=stmt.executeQuery(checkeffectiveness);
+			Boolean eff=rs.next();	//참이면 유효O
+			System.out.println("검색결과"+eff);
+			if(rs.getInt("MAXATTENDEE")-rs.getInt("CRTATTENDEE")<1) {
+				System.out.println("인원초과");
+				eff=false;
+				}
+			if(!eff) System.out.println("교육신청번호 또는 인원을 확인하세요");
+			if(eff& stmt2.executeUpdate(trainingsql)+stmt2.executeUpdate(listsql)==2) {
+					System.out.print("교육 신청");
+					con.commit();
+					System.out.print(" 완료\n");
+					}else {
+						System.out.println("신청할 수 없습니다");
+					}
+			
+			
      } catch (SQLException e) {
 		System.out.println("SQL예외: "+e.getMessage());
 		System.out.print("실패. 신청여부를 확인하세요 \t");
