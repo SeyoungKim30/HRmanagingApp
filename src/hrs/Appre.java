@@ -1,14 +1,19 @@
 package hrs;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
+import vos.Appraisal;
 import vos.DB;
+import vos.Employee;
 import welcome.Welcome1;
 
 /*
@@ -23,7 +28,7 @@ public class Appre {
 	private Connection con;
 	private Statement stmt;
 	private Statement stmt2;
-	private Statement stmt3;
+	private PreparedStatement pstmt;
 	private ResultSet rs;
 	private ResultSet rs2;
 	Date today = new Date();
@@ -66,44 +71,53 @@ public class Appre {
 
 	public void insertAns() { // 답변 등록
 		// 반복 질문번호별로
-		// 연도에 맞게 질문 가져와서 출력 (질문 테이블)
-		String que = "SELECT * FROM APPRAISALQUE a  WHERE substr(queno,1,4)=" + year;
 		// 점수 입력(답변 테이블)
 		String anw = null; 
+		List<Employee> objlist=new ArrayList<Employee> ();
+		List<Appraisal> quelist=new ArrayList<Appraisal> ();
+		
 
 		try {
 			con = DB.con();
 			con.setAutoCommit(false);
 			stmt = con.createStatement();
 			stmt2 = con.createStatement();
-			rs = stmt.executeQuery(que); // 올해 질문만 뽑아오기
+			// 내 로그인 정보를 사용해서 나랑 같은 부서 사람들 선택
 			rs2 = stmt2.executeQuery("select * from employee where deptno = " + Welcome1.user.getDeptno()
-					+ " AND empno <> " + Welcome1.user.getEmpno()); // 내 로그인 정보를 사용해서 나랑 같은 부서 사람들 선택
-			while (rs2.next()) {
-				System.out.println("┏━━━━━━━━━━━━━━━━━━━┓");
-				System.out.println(rs2.getString("name"));
-				while (rs.next()) {
-					int objnumber = rs2.getInt("Empno");
-					System.out.println(rs.getString("question")); // 뽑아온 질문 출력
-					String point = sc.nextLine();
-					anw = "INSERT INTO APPRAISALANSWER VALUES (" + rs.getInt("Queno") + "," + point + "," + Welcome1.user.getEmpno()
-							+ "," + objnumber + ")";
-					try {
-						stmt3 = con.createStatement();
-						stmt3.executeUpdate(anw);
-					} catch (SQLException e) {
-						System.out.println("이미 평가를 했습니다");
-						try {
-							con.rollback();
-						} catch (SQLException e1) {
-							System.out.println("롤백예외발생:" + e1.getMessage());
-						}
-					}
-				}
+					+ " AND empno <> " + Welcome1.user.getEmpno()); 
+			while (rs2.next()) {	//내 부서 사람들
+			objlist.add(new Employee(rs2.getInt("Empno"),rs2.getString("name")));
 			}
+			
+			String que = "SELECT * FROM APPRAISALQUE a  WHERE substr(queno,1,4)=" + year;	// 연도에 맞게 질문 가져와서 출력 (질문 테이블)
+			rs = stmt.executeQuery(que); // 올해 질문만 뽑아오기
+			while(rs.next()) {
+			quelist.add(new Appraisal(rs.getInt("queno"),rs.getString("Question")));
+			}
+			
+			for(Employee ob:objlist) {
+			System.out.println("┏━━━━━━━━━━━━━━━━━━━┓");
+			int obj=ob.getEmpno();
+			System.out.println(ob.getName()+"의 평가");
+			for(Appraisal ap:quelist) {
+				System.out.println(ap.getQueno()+":"+ap.getQuestion());
+				int point = sc.nextInt();
+				anw = "INSERT INTO APPRAISALANSWER ( SELECT ?,?,?,? FROM DUAL WHERE NOT EXISTS( SELECT * FROM APPRAISALANSWER a WHERE sub= ? AND obj = ? AND queno = ?))";
+				pstmt=con.prepareStatement(anw);
+				pstmt.setInt(1,ap.getQueno());
+				pstmt.setInt(2,point);
+				pstmt.setInt(3,Welcome1.user.getEmpno());
+				pstmt.setInt(4,obj);
+				pstmt.setInt(5,Welcome1.user.getEmpno());
+				pstmt.setInt(6,obj);
+				pstmt.setInt(7,ap.getQueno());
+				if(pstmt.executeUpdate()!=1) System.out.println("중복된 평가는 저장되지 않습니다");
+				}
 			System.out.println("┗━━━━━━━━━━━━━━━━━━━┛");
+			}
 			con.commit();
 			System.out.println("평가 완료");
+			
 		} catch (SQLException e) {
 			System.out.println("sql예외:" + e.getMessage());
 			try {

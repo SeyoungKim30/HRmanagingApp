@@ -25,8 +25,8 @@ ALTER TABLE appraisalAnswer ADD CHECK (point BETWEEN 1 AND 5)  ;
 
 SELECT * FROM EMPLOYEE e ;
 SELECT * FROM DEPARTMENT d  ;
-SELECT * FROM appraisalQue ORDER BY QUENO ;
-SELECT * FROM APPRAISALANSWER ;
+SELECT * FROM appraisalQue ;
+SELECT * FROM APPRAISALANSWER;
 
 --질문 입력할때
 --INSERT INTO appraisalQue VALUES (2021||seqforAppraQ.nextval ,'업무 협조도');
@@ -79,8 +79,12 @@ SELECT dname, ROUND(avg(point),3)  FROM APPRAISALANSWER a , EMPLOYEE e,DEPARTMEN
 SELECT dname, question , ROUND(avg(point),3)  FROM APPRAISALANSWER a , EMPLOYEE e,DEPARTMENT d, APPRAISALQUE aq 
 WHERE e.EMPNO =a.OBJ AND d.DEPTNO =e.DEPTNO AND aq.QUENO =a.QUENO AND dname LIKE '%'||''||'%' AND substr(aq.QUENO,1,4)=2022 GROUP BY dname, Question ORDER BY dname  ;
 
-
 --2022년도 질문만
-SELECT * FROM APPRAISALQUE a  WHERE substr(queno,1,4)=2022;
+SELECT * FROM APPRAISALQUE a  WHERE substr(queno,1,4)=2022
+AND NOT EXISTS( SELECT * FROM APPRAISALANSWER a WHERE sub=2022101026 AND obj =2022101001 AND queno =20228);
 --나랑 같은 부서 사람들(나 빼고)
-select name from employee where deptno = 40 AND empno <> 내번호;
+select name from employee where deptno = 40 AND empno <> 2022101001 ;
+--이사람이 문제랑 obj에 없을때
+INSERT INTO APPRAISALANSWER (SELECT 문제번호,점수,내번호,대상자 FROM DUAL 
+	WHERE NOT EXISTS ( SELECT * FROM APPRAISALANSWER a WHERE sub= 내번호 AND obj = 대상자 AND queno = 문제번호));
+	

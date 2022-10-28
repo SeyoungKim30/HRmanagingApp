@@ -142,12 +142,12 @@ public class HrplanDao {
 	}
 
 	public void budgetByAccount(BudgetVo bb) { // 계정별로 예산보기 (연도, 부서 필터)
-		System.out.println("조회연도를 입력하세요(N을 누르면 부서번호 필터를 적용하지 않습니다)");
+		System.out.println("조회연도를 입력하세요(N을 누르면 필터를 적용하지 않습니다)");
 		String year = sc.nextLine();
 		if (!year.equals("N")) {
 			bb.setYear(year);
 			}
-		System.out.println("부서번호를 입력하세요(N을 누르면 부서 필터를 적용하지 않습니다)");
+		System.out.println("부서번호를 입력하세요(N을 누르면 필터를 적용하지 않습니다)");
 		String deptno = sc.nextLine();
 		if (!deptno.equals("N")) {
 			bb.setDeptno(deptno);

@@ -21,6 +21,7 @@ public class Userrun {
 	
 	public Userrun() {
 	while(true) {	
+		System.out.println("━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─");
 		System.out.println("1.사원정보  2.부서정보  3.근무일정  4.급여  5.복지,교육 6.인사평가  99.종료");
 		choose=sc.nextInt();	
 		if(choose==99) break;
@@ -49,8 +50,7 @@ public class Userrun {
 	}
 	public void userBenefits() {	//5 복지교육
 		TrainingDao tr=new TrainingDao();
-		BenefitDao bn = new BenefitDao();
-		
+		BenefitDao bn = new BenefitDao();	
 		System.out.println("1.교육신청  2.교육 검색  3.내가 신청한 교육");
 		System.out.println("4.복지신청  5.복지 검색  6.내가 신청한 복지\n0.다른메뉴");
 		choose=sc.nextInt();

@@ -52,4 +52,4 @@ OR de.dname LIKE '%'||''||'%');
 SELECT empno, pass FROM EMPLOYEE WHERE empno = '2022101001' AND pass = '12345';
 
 SELECT * FROM employee WHERE empno NOt in (SELECT r.EMPNO FROM RETIREMENT r WHERE state LIKE '퇴사');
-
+SELECT * FROM department;

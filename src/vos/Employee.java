@@ -31,6 +31,10 @@ public Employee(int empno, String name, String birth, String address, String edu
 	this.rank = rank;
 	this.pass = pass;
 }
+public Employee(int empno, String name) {
+	this.empno = empno;
+	this.name = name;
+}
 
 public void printAll() {
 	System.out.println("━━━━━━━━━━━━━━━");

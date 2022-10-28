@@ -26,8 +26,8 @@ public class Adminrun {
 	public Adminrun() {
 		while(true) {
 		System.out.println("━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─");
-		System.out.println("1.인사관리  2.부서관리  3.근무일정 관리  4.급여관리  5.복지,교육  6.인사평가");
-		System.out.println("7.계획/분석  8.퇴사관리 99. 종료");
+		System.out.println("1.사원정보  2.부서정보  3.근무일정  4.급여  5.복지,교육  6.인사평가");
+		System.out.println("7.계획/분석  8.퇴사관리 99.종료");
 		choose=sc.nextInt();	
 		if(choose==99) break;
 		switch(choose) {
